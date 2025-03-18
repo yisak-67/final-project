@@ -30,6 +30,7 @@ npx hardhat run scripts/deploy.ts
 
 ---
 
+
 ## 📦 Requirements and Dependencies
 
 ### 🔗 **Blockchain Sub-Project** (`blockchain/package.json`)
