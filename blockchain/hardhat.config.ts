@@ -43,6 +43,7 @@ const config: HardhatUserConfig = {
       },
     },
   },
+        
   paths: {
     artifacts: "../frontend/artifacts",
   },
