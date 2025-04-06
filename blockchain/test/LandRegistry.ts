@@ -6,6 +6,7 @@ import { ethers } from "hardhat";
 describe("Deployment", () => {
   let contract: Contract;
   let owner;
+  
 
   beforeEach(async () => {
     const LandRegistry = await ethers.getContractFactory("LandRegistery");
