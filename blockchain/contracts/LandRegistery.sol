@@ -413,4 +413,80 @@ contract LandRegistery {
     ) public payable {
         _recieverAddress.transfer(msg.value);
     }
+
+    function getRecentTransfer(
+        uint _requestId
+    ) public view returns (Transfer memory) {
+        if (allTransfersIds[_requestId]) {
+            return allTransfers[_requestId];
+        }
+        revert TransferNotFound();
+    }
+    function getAllLands() public view returns (Land[] memory) {
+        Land[] memory lands = new Land[](landsTotal);
+        uint count = 0;
+        for (uint i = 0; i < landsTotal; i++) {
+            Land memory land = allLands[i];
+            lands[count] = land;
+            count++;
+        }
+        return lands;
+    }
+    function getAllUsers() public view returns (User[] memory) {
+        User[] memory users = new User[](usersTotal);
+        uint count = 0;
+        for (uint i = 0; i < usersTotal; i++) {
+            User memory user = allUsers[userAddressList[i]];
+            users[count] = user;
+            count++;
+        }
+        return users;
+    }
+    function getAllRequests() public view returns (Request[] memory) {
+        Request[] memory requests = new Request[](requestCount);
+        uint count = 0;
+        for (uint i = 0; i < requestCount; i++) {
+            Request memory request = allRequests[i];
+            requests[count] = request;
+            count++;
+        }
+        return requests;
+    }
+    function getAllTransfers() public view returns (Transfer[] memory) {
+        Transfer[] memory transfers = new Transfer[](transferTotal);
+        uint count = 0;
+        for (uint i = 0; i < transferTotal; i++) {
+            Transfer memory transfer = allTransfers[i];
+            transfers[count] = transfer;
+            count++;
+        }
+        return transfers;
+    }
+    function getAllUserAddress() public view returns (address[] memory) {
+        return userAddressList;
+    }
+    function getAllUserAddressLength() public view returns (uint) {
+        return userAddressList.length;
+    }
+    function getAllLandsLength() public view returns (uint) {
+        return landsTotal;
+    }
+    function getAllUsersLength() public view returns (uint) {
+        return usersTotal;
+    }
+    function getAllRequestsLength() public view returns (uint) {
+        return requestCount;
+    }
+    function getAllTransfersLength() public view returns (uint) {
+        return transferTotal;
+    }
+    function getAllLandIds() public view returns (uint[] memory) {
+        uint[] memory landIds = new uint[](landsTotal);
+        uint count = 0;
+        for (uint i = 0; i < landsTotal; i++) {
+            landIds[count] = i;
+            count++;
+        }
+        return landIds;
+    }
 }
