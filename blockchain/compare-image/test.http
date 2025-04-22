@@ -1,0 +1,7 @@
+post http://localhost:4000/api/v1/compare-images
+Content-Type: application/json
+
+{
+  "image1":"https://bafkreig6oikncv6a2btgzdjao6roe4pztcl2u4oob6nmjlznxlr6eagkmm.ipfs.dweb.link",
+  "image2":"https://github.com/Dawit2119/codeforces/blob/main/landImage1.jpg?raw=true"
+}

@@ -7,7 +7,7 @@ const nextConfig = {
   },
   env: {
     PINATA_API_KEY:"ed6ee4af79c4feb7a5ff",
-  PINATA_SECRET_API_KEY:"c05a7c3972626e116bc16fb614c84dbbab2e2d1ae4c107c5c6410337760c8d46",
+    PINATA_SECRET_API_KEY:"c05a7c3972626e116bc16fb614c84dbbab2e2d1ae4c107c5c6410337760c8d46",
     MAP_BOX_TOKEN:
       "pk.eyJ1IjoiZnJlbmVoIiwiYSI6ImNtODl1ZzA3NjEwcWMybXM1ODFoandidjUifQ.c4rSJWEpCkNaCnjf8U-5fQ",
     NFT_URL: "https://api.nft.storage/",
