@@ -59,7 +59,7 @@ const LandCard: React.FC<{ landItem: LandModel; index: number }> = ({
       <div className="flex flex-row justify-between items-start">
         <div className="flex flex-row">
           <span className=" text-blue-600 font-semibold flex flex-row">
-            <img src="/Icons/Verify.svg" width={20} height={20} />
+            <img src="/Icons/Verify.svg" alt="Verification icon" width={20} height={20} />
             <span className="ml-2 ">
               {" "}
               {landItem.isVerified ? "Land verified" : "Land unverified"}{" "}
@@ -70,6 +70,7 @@ const LandCard: React.FC<{ landItem: LandModel; index: number }> = ({
             <img
               className=""
               src="/Icons/location.svg"
+              alt="Location icon"
               width={18}
               height={18}
             />
