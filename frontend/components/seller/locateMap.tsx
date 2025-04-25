@@ -32,7 +32,12 @@ const LocateMap = () => {
 
   return (
     <div className="w-[1000px] h-full scroll-my-1 bg-[#082232] fixed right-0 top-0 p-6  z-[1000] text-white rounded-l-[25px]  transition ease-in-out">
-      <button className="mt-1 " onClick={() => dispatch(setShowMapbox(false))}>
+      <button
+        type="button"
+        title="Close map"
+        className="mt-1 "
+        onClick={() => dispatch(setShowMapbox(false))}
+      >
         <AiOutlineLeft size={30} />
       </button>
       <div
