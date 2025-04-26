@@ -16,72 +16,59 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
   const markersRef = useRef<mapboxgl.Marker[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check mobile viewport on mount and resize
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
-    // Skip if no container or no coordinates
     if (!mapContainer.current) return;
     
     setIsLoading(true);
     setError(null);
 
     try {
-      // Handle undefined or empty coordinates
-      if (!latandlongs) {
-        throw new Error("No coordinates provided");
-      }
-
-      console.log("Raw coordinates input:", latandlongs);
+      if (!latandlongs) throw new Error("No coordinates provided");
 
       let coordinates: number[][];
       
-      // Case 1: Already parsed array
       if (Array.isArray(latandlongs)) {
-        coordinates = latandlongs[0]; // Take first element if nested array
-      } 
-      // Case 2: String that needs parsing
-      else if (typeof latandlongs === 'string') {
+        coordinates = latandlongs[0];
+      } else if (typeof latandlongs === 'string') {
         try {
           const parsed = JSON.parse(latandlongs);
           coordinates = Array.isArray(parsed[0]?.[0]) ? parsed[0] : parsed;
         } catch (parseError) {
-          throw new Error(`Invalid JSON format: ${latandlongs}`);
+          throw new Error(`Invalid JSON format`);
         }
       } else {
         throw new Error("Unsupported coordinates format");
       }
 
-      console.log("Processed coordinates:", coordinates);
-
-      // Validate coordinates structure
       if (!coordinates || coordinates.length < 3) {
         throw new Error("At least 3 coordinate points required");
       }
 
-      // Validate each coordinate pair
-      const isValid = coordinates.every(coord => 
-        Array.isArray(coord) && 
-        coord.length === 2 && 
-        !isNaN(coord[0]) && 
-        !isNaN(coord[1])
-      );
-
-      if (!isValid) {
-        throw new Error("Invalid coordinate values detected");
-      }
-
-      // Initialize map
       const map = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/satellite-streets-v12",
         center: [coordinates[0][0], coordinates[0][1]],
-        zoom: 16,
-        antialias: true
+        zoom: isMobile ? 14 : 16, // Smaller zoom on mobile
+        antialias: true,
+        interactive: true,
+        touchZoomRotate: true // Better mobile touch support
       });
 
       mapRef.current = map;
 
       map.on("load", () => {
         try {
+          // Add land polygon
           map.addSource(`land-${index}`, {
             type: "geojson",
             data: {
@@ -110,36 +97,27 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
             source: `land-${index}`,
             paint: {
               "line-color": "#000",
-              "line-width": 3
+              "line-width": isMobile ? 2 : 3 // Thinner lines on mobile
             }
           });
 
           addDistanceMarkers(map, coordinates);
           setIsLoading(false);
         } catch (layerError) {
-          throw new Error(`Failed to add map layers: ${layerError.message}`);
+          throw new Error(`Map rendering failed`);
         }
-      });
-
-      map.on("error", (e) => {
-        throw new Error(`Map error: ${e.error?.message || "Unknown map error"}`);
       });
 
       return () => {
         markersRef.current.forEach(marker => marker.remove());
-        markersRef.current = [];
-        if (mapRef.current) {
-          mapRef.current.remove();
-          mapRef.current = null;
-        }
+        if (mapRef.current) mapRef.current.remove();
       };
 
     } catch (error) {
-      console.error("Map rendering error:", error);
       setError(error instanceof Error ? error.message : "Map display failed");
       setIsLoading(false);
     }
-  }, [latandlongs, index]);
+  }, [latandlongs, index, isMobile]);
 
   const addDistanceMarkers = (map: mapboxgl.Map, coordinates: number[][]) => {
     markersRef.current.forEach(marker => marker.remove());
@@ -162,52 +140,69 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
         Object.assign(popup.style, {
           background: "#FFFFFF",
           color: "#000000",
-          width: "70px",
-          textAlign: "center",
-          padding: "4px",
+          width: isMobile ? "60px" : "70px", // Smaller on mobile
+          padding: isMobile ? "2px" : "4px",
+          fontSize: isMobile ? "10px" : "12px", // Smaller text on mobile
           borderRadius: "4px",
-          fontSize: "12px"
+          textAlign: "center",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
         });
 
-        const marker = new mapboxgl.Marker({ element: popup })
-          .setLngLat(midpoint.geometry.coordinates as [number, number])
+        const marker = new mapboxgl.Marker({ 
+          element: popup,
+          anchor: 'center'
+        }).setLngLat(midpoint.geometry.coordinates as [number, number])
           .addTo(map);
 
         markersRef.current.push(marker);
-      } catch (markerError) {
-        console.error("Marker error:", markerError);
+      } catch (error) {
+        console.error("Marker error:", error);
       }
     }
   };
 
   return (
-    <div>
+    <div className="w-full">
+      {/* Responsive Map Container */}
       <div
         ref={mapContainer}
-        id={`Map-${index}`}
-        className="rounded-[15px] object-contain h-[350px] w-[400px] relative"
+        className={`
+          rounded-lg shadow-md
+          h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] 
+          w-full  // Full width on all devices
+          relative overflow-hidden
+        `}
       >
+        {/* Loading State */}
         {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100/50 rounded-[15px]">
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100/50">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
           </div>
         )}
         
+        {/* Error State */}
         {error && (
-          <div className="absolute inset-0 bg-red-50 flex items-center justify-center p-4 rounded-[15px]">
-            <div className="text-center">
-              <p className="font-bold text-red-600">Map Error</p>
-              <p className="text-red-500">{error}</p>
+          <div className="absolute inset-0 bg-red-50/90 flex items-center justify-center p-4">
+            <div className="text-center max-w-xs">
+              <p className="font-bold text-red-600 text-sm sm:text-base">Map Error</p>
+              <p className="text-red-500 text-xs sm:text-sm mt-1">{error}</p>
               <button 
                 onClick={() => window.location.reload()}
-                className="mt-2 px-3 py-1 bg-red-100 rounded text-sm"
+                className="mt-3 px-3 py-1 bg-red-100 rounded text-xs sm:text-sm hover:bg-red-200 transition"
               >
-                Reload
+                Reload Map
               </button>
             </div>
           </div>
         )}
       </div>
+
+      {/* Mobile Instructions */}
+      {isMobile && (
+        <p className="text-xs text-gray-500 mt-2 text-center">
+          Pinch to zoom • Tap markers for details
+        </p>
+      )}
     </div>
   );
 };
