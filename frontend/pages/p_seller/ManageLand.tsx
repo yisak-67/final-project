@@ -105,6 +105,7 @@ const Manage_land = () => {
                               src="/Icons/Verify.svg"
                               width={20}
                               height={20}
+                              alt="Verified Icon"
                             />
                           ) : (
                             <AiFillQuestionCircle size={20} />
