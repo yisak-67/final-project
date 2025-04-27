@@ -18,7 +18,6 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Check mobile viewport on mount and resize
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -54,21 +53,26 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
         throw new Error("At least 3 coordinate points required");
       }
 
+      // Calculate the bounding box for better view
+      const bbox = turf.bbox(turf.polygon([coordinates]));
       const map = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/satellite-streets-v12",
-        center: [coordinates[0][0], coordinates[0][1]],
-        zoom: isMobile ? 14 : 16, // Smaller zoom on mobile
+        bounds: bbox,
+        fitBoundsOptions: {
+          padding: isMobile ? 20 : 50, // Less padding on mobile
+          maxZoom: 18 // Limit maximum zoom
+        },
         antialias: true,
         interactive: true,
-        touchZoomRotate: true // Better mobile touch support
+        touchZoomRotate: true
       });
 
       mapRef.current = map;
 
       map.on("load", () => {
         try {
-          // Add land polygon
+          // Add land polygon with more stylish appearance
           map.addSource(`land-${index}`, {
             type: "geojson",
             data: {
@@ -81,27 +85,49 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
             }
           });
 
+          // Main fill layer with gradient effect
           map.addLayer({
             id: `land-fill-${index}`,
             type: "fill",
             source: `land-${index}`,
             paint: {
-              "fill-color": "#0080ff",
-              "fill-opacity": 0.5
+              "fill-color": "#4eac6f",
+              "fill-opacity": 0.3,
+              "fill-outline-color": "#4eac6f"
             }
           });
 
+          // Inner glow effect
+          map.addLayer({
+            id: `land-glow-${index}`,
+            type: "fill",
+            source: `land-${index}`,
+            paint: {
+              "fill-color": "#4eac6f",
+              "fill-opacity": 0.1,
+              "fill-translate": [0, 0]
+            }
+          });
+
+          // Outline with better visibility
           map.addLayer({
             id: `land-outline-${index}`,
             type: "line",
             source: `land-${index}`,
             paint: {
-              "line-color": "#000",
-              "line-width": isMobile ? 2 : 3 // Thinner lines on mobile
+              "line-color": "#4eac6f",
+              "line-width": isMobile ? 2 : 3,
+              "line-opacity": 0.8,
+              "line-dasharray": [2, 2]
             }
           });
 
+          // Add markers with improved styling
           addDistanceMarkers(map, coordinates);
+          
+          // Add a marker at each vertex
+          addVertexMarkers(map, coordinates);
+          
           setIsLoading(false);
         } catch (layerError) {
           throw new Error(`Map rendering failed`);
@@ -119,14 +145,34 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
     }
   }, [latandlongs, index, isMobile]);
 
+  const addVertexMarkers = (map: mapboxgl.Map, coordinates: number[][]) => {
+    coordinates.forEach((coord, i) => {
+      const el = document.createElement('div');
+      el.className = 'vertex-marker';
+      Object.assign(el.style, {
+        width: isMobile ? '12px' : '16px',
+        height: isMobile ? '12px' : '16px',
+        backgroundColor: '#4eac6f',
+        borderRadius: '50%',
+        border: '2px solid white',
+        cursor: 'pointer'
+      });
+
+      new mapboxgl.Marker(el)
+        .setLngLat([coord[0], coord[1]])
+        .addTo(map);
+    });
+  };
+
   const addDistanceMarkers = (map: mapboxgl.Map, coordinates: number[][]) => {
     markersRef.current.forEach(marker => marker.remove());
     markersRef.current = [];
 
-    for (let i = 0; i < coordinates.length - 1; i++) {
+    for (let i = 0; i < coordinates.length; i++) {
       try {
+        const nextIndex = (i + 1) % coordinates.length;
         const [startLng, startLat] = coordinates[i];
-        const [endLng, endLat] = coordinates[i + 1];
+        const [endLng, endLat] = coordinates[nextIndex];
 
         const segment = turf.lineString([[startLng, startLat], [endLng, endLat]]);
         const length = turf.length(segment, { units: "meters" });
@@ -136,16 +182,19 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
         );
 
         const popup = document.createElement("div");
+        popup.className = "distance-marker";
         popup.innerHTML = `${length.toFixed(2)}m`;
         Object.assign(popup.style, {
           background: "#FFFFFF",
-          color: "#000000",
-          width: isMobile ? "60px" : "70px", // Smaller on mobile
-          padding: isMobile ? "2px" : "4px",
-          fontSize: isMobile ? "10px" : "12px", // Smaller text on mobile
-          borderRadius: "4px",
+          color: "#4eac6f",
+          width: isMobile ? "60px" : "70px",
+          padding: isMobile ? "4px 2px" : "6px 4px",
+          fontSize: isMobile ? "10px" : "12px",
+          borderRadius: "12px",
           textAlign: "center",
-          boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
+          boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
+          fontWeight: "600",
+          border: "1px solid #4eac6f"
         });
 
         const marker = new mapboxgl.Marker({ 
@@ -163,24 +212,21 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
 
   return (
     <div className="w-full">
-      {/* Responsive Map Container */}
       <div
         ref={mapContainer}
         className={`
-          rounded-lg shadow-md
+          rounded-lg shadow-lg border border-gray-200
           h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] 
-          w-full  // Full width on all devices
+          w-full
           relative overflow-hidden
         `}
       >
-        {/* Loading State */}
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100/50">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#4eac6f]"></div>
           </div>
         )}
         
-        {/* Error State */}
         {error && (
           <div className="absolute inset-0 bg-red-50/90 flex items-center justify-center p-4">
             <div className="text-center max-w-xs">
@@ -197,7 +243,6 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
         )}
       </div>
 
-      {/* Mobile Instructions */}
       {isMobile && (
         <p className="text-xs text-gray-500 mt-2 text-center">
           Pinch to zoom • Tap markers for details
