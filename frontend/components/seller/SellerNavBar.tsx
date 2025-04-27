@@ -42,58 +42,60 @@ const SellerNavBar: React.FC = () => {
   };
 
   return (
-    <div className="ml-[270px] h-[40px] flex flex-row items-center justify-between">
-      <div></div>
-      <div className="mr-5 px-4 py-10 flex flex-row gap-2 relative">
-        <div
-          className="flex flex-row items-center justify-center cursor-pointer"
-          onClick={toggleDropdown}
-        >
-          <p>{user?.fullName}</p>
-          <img src="/Icons/profile.svg" alt="Profile Icon" className="ml-2" />
-        </div>
-        {showDropdown && (
+   
+      <div className="ml-[270px] h-16 flex items-center justify-between bg-white shadow-sm px-6">
+        <div></div>
+        <div className="relative flex items-center gap-2">
           <div
-            ref={dropdownRef}
-            className="absolute right-0 mt-10 w-[300px] bg-white rounded-lg py-2 border-t-2 border-green-600 shadow-xl md:pl-2"
+            className="flex items-center cursor-pointer"
+            onClick={toggleDropdown}
           >
-            {/* Dropdown content */}
-            <div
-              style={{ backgroundColor: "rgb(245, 246, 250)" }}
-              className="flex items-start mt-[-9px] ml-[-9px] mb-2 px-4 py-2 rounded-lg"
-            >
-              <img
-                src="/Icons/profile.svg"
-                alt="Avatar"
-                className="rounded-full mr-4 mt-4"
-              />
-              <div>
-                <h2 className="text-xl font-bold">{user?.fullName}</h2>
-                <p className="text-gray-600">{user?.email}</p>
-              </div>
-            </div>
-
-            <a
-              href="/p_auth/sellerProfile"
-              className="px-4 py-2 flex flex-row items-center hover:bg-gray-100"
-            >
-              <FaRegUser className="text-red-500 mr-3" />
-              View Profile
-            </a>
-
-            <hr className="border-gray-300 my-3" />
-            <a
-              onClick={onLogoutClicked}
-              className="px-4 py-4 flex items-center hover:bg-gray-200"
-            >
-              <FaSignOutAlt className="text-green-500 mr-3" />
-              Sign Out
-            </a>
+            <p className="text-sm font-medium">{user?.fullName}</p>
+            <img src="/Icons/profile.svg" alt="Profile Icon" className="ml-2 w-6 h-6" />
           </div>
-        )}
+    
+          {showDropdown && (
+            <div
+              ref={dropdownRef}
+              className="absolute right-0 mt-20 w-72 bg-white rounded-lg py-3 border-t-2 border-green-600 shadow-xl z-50"
+            >
+              {/* Profile Preview */}
+              <div className="flex items-start gap-4 bg-gray-100 p-4 rounded-t-lg">
+                <img
+                  src="/Icons/profile.svg"
+                  alt="Avatar"
+                  className="w-12 h-12 rounded-full"
+                />
+                <div>
+                  <h2 className="text-lg font-semibold">{user?.fullName}</h2>
+                  <p className="text-sm text-gray-600">{user?.email}</p>
+                </div>
+              </div>
+    
+              {/* View Profile Link */}
+              <a
+                href="/p_auth/sellerProfile"
+                className="px-4 py-2 flex items-center hover:bg-gray-100 transition"
+              >
+                <FaRegUser className="text-red-500 mr-3" />
+                <span>View Profile</span>
+              </a>
+    
+              <hr className="my-2 border-gray-200" />
+    
+              {/* Sign Out */}
+              <button
+                onClick={onLogoutClicked}
+                className="w-full text-left px-4 py-2 flex items-center hover:bg-gray-100 transition"
+              >
+                <FaSignOutAlt className="text-green-500 mr-3" />
+                <span>Sign Out</span>
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }    
 
 export default SellerNavBar;
