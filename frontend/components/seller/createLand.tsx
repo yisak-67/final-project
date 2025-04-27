@@ -1,51 +1,29 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import { ToastContainer } from "react-toastify";
+
 import { useAppDispatch, useAppSelector } from "@/lib/appstate";
-import {
-  setFilePath,
-  setShowFileUpload,
-  setShowMapbox,
-} from "@/lib/appstate/features/land/actions";
+import { setFilePath, setShowFileUpload, setShowMapbox } from "@/lib/appstate/features/land/actions";
 import { LandSelector } from "@/lib/appstate/features/land/selectors";
 import { LandModel } from "@/lib/models/land";
-import {
-  getCurrentAccount,
-  mainContractProvider,
-} from "@/lib/services/blockchainService/providers/localHostProvider";
-import {
-  createLandWithContract,
-  getLandWithContract,
-  getTotalLandsCountWithContract,
-} from "@/lib/services/blockchainService/landcontractServices";
-import React, { useState } from "react";
+import { getCurrentAccount } from "@/lib/services/blockchainService/providers/localHostProvider";
+import { createLandWithContract } from "@/lib/services/blockchainService/landcontractServices";
+
 import CustomButton from "../common/customButton";
 import CustomFormField from "../common/customFormField";
 import FileUpload from "../common/fileUpload";
 import LocateMap from "./locateMap";
 import { DisplayLand, Loader } from "../common";
-import { useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import { useRouter } from "next/router";
 
-let window: any;
-
-const CreateLand = () => {
+const CreateLand: React.FC = () => {
   const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    dispatch(setFilePath(""));
-  }, []);
-
   const router = useRouter();
 
-  const {
-    isFileUploadShowing,
-    isLocateLandShowing,
-    locationAddress,
-    filePath,
-    landArea,
-  } = useAppSelector(LandSelector);
+  const { isFileUploadShowing, isLocateLandShowing, locationAddress, filePath, landArea } = useAppSelector(LandSelector);
 
   const [isLoading, setIsLoading] = useState(false);
-
   const [landForm, setLandForm] = useState<LandModel>({
     title: "",
     documentHash: "",
@@ -53,154 +31,150 @@ const CreateLand = () => {
     locationAddress: "",
     landAddress: "",
     detail: "",
-    postedBy: "0x43dsfadsjkfhasdkfjasdhf",
+    postedBy: "",
     postedDate: new Date(),
     area: "",
   });
-console.log(landForm);
-  const handleSubmit = async (e: any) => {
+
+  useEffect(() => {
+    dispatch(setFilePath(""));
+  }, [dispatch]);
+
+  const handleFormFieldChange = (field: keyof LandModel, value: string) => {
+    setLandForm((prevForm) => ({ ...prevForm, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const useAddress = getCurrentAccount();
+    try {
+      const userAddress = await getCurrentAccount();
 
-    const result = await createLandWithContract({
-      title: landForm.title,
-      documentHash: filePath as string,
-      price: landForm.price,
-      locationAddress: locationAddress as string,
-      landAddress: landForm.landAddress,
-      detail: landForm.detail,
-      postedBy: `${useAddress}`,
-      postedDate: landForm.postedDate,
-      isVerified: false,
-      area: `${landArea}`,
-    });
+      const landData: LandModel = {
+        ...landForm,
+        documentHash: filePath || "",
+        locationAddress: locationAddress || "",
+        postedBy: userAddress || "",
+        area: landArea ? String(landArea) : "",
+      };
 
-    console.log("land result");
-    console.log(result);
-    setIsLoading(false);
-    router.push("/p_seller/ManageLand");
-  };
+      const result = await createLandWithContract({ ...landData, isVerified: false });
 
-  const handleFormFieldChange = (
-    fieldName: any,
-    e: { target: { value: any } }
-  ) => {
-    setLandForm({ ...landForm, [fieldName]: e.target.value });
+      console.log("Created Land:", result);
+      router.push("/p_seller/ManageLand");
+    } catch (error) {
+      console.error("Error creating land:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className="h-full flex justify-center items-center mt-5">
+    <div className="flex justify-center items-start mt-5 px-4 sm:px-6 lg:px-8 min-h-screen">
       {isFileUploadShowing && <FileUpload />}
       {isLocateLandShowing && <LocateMap />}
       {isLoading && <Loader />}
       <ToastContainer />
-      <div className="p-10 mb-4  border border-solid border-gray-100 shadow ring-1 w-[900px] ring-gray-50">
-        <div className="flex flex-1 items-start justify-start">
-          <h1 className="font-epilogue sm:text-[20px] text-[25px] leading-[60px] text-black">
-            Create Land
-          </h1>
-        </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className=" mt-6 flex flex-col gap-[30px]"
-        >
-          <div className="flex flex-row gap-6">
-            <CustomFormField
-              LableName="Land Title *"
-              placeholder="Apartment"
-              inputType="text"
-              isTextArea={false}
-              value={landForm.title as string}
-              handleChange={(e: { target: { value: any } }) =>
-                handleFormFieldChange("title", e)
-              }
-            />
-            <CustomFormField
-              LableName="Price *"
-              placeholder="1000000"
-              inputType="text"
-              isTextArea={false}
-              value={landForm.price as string}
-              handleChange={(e: { target: { value: any } }) =>
-                handleFormFieldChange("price", e)
-              }
-            />
+      <div className="p-4 sm:p-6 lg:p-8 mb-10 border border-gray-200 shadow-lg w-full max-w-5xl rounded-xl bg-white mx-2 sm:mx-4">
+        <h1 className="font-epilogue text-2xl sm:text-3xl font-semibold text-black mb-4 sm:mb-6">Create Land</h1>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6 sm:gap-8">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+            <div className="flex-1">
+              <CustomFormField
+                LableName="Land Title *"
+                placeholder="Apartment"
+                inputType="text"
+                isTextArea={false}
+                value={landForm.title || ""}
+                handleChange={(e) => handleFormFieldChange("title", e.target.value)}
+              />
+            </div>
+            <div className="flex-1">
+              <CustomFormField
+                LableName="Price *"
+                placeholder="1000000"
+                inputType="text"
+                isTextArea={false}
+                value={landForm.price}
+                handleChange={(e) => handleFormFieldChange("price", e.target.value)}
+              />
+            </div>
           </div>
-          <CustomFormField
-            LableName="Detail *"
-            placeholder="Land Detail"
-            inputType="text"
-            isTextArea={true}
-            value={landForm.detail as string}
-            handleChange={(e: { target: { value: any } }) =>
-              handleFormFieldChange("detail", e)
-            }
-          />
-
-          <CustomFormField
-            LableName="Land Address *"
-            placeholder="5 Kilo"
-            inputType="text"
-            isTextArea={false}
-            value={landForm.landAddress as string}
-            handleChange={(e: { target: { value: any } }) =>
-              handleFormFieldChange("landAddress", e)
-            }
-          />
 
           <div>
-            <p className="font-epilogue sm:text-[15px] text-[15px] leading-[60px] text-[#4eac6f]">
-              Land Area : {landArea} m2
-            </p>
+            <CustomFormField
+              LableName="Detail *"
+              placeholder="Land Detail"
+              inputType="text"
+              isTextArea
+              value={landForm.detail}
+              handleChange={(e) => handleFormFieldChange("detail", e.target.value)}
+            />
           </div>
 
-          <div className="w-[#200px] flex flex-row justify-between">
+          <div>
+            <CustomFormField
+              LableName="Land Address *"
+              placeholder="5 Kilo"
+              inputType="text"
+              isTextArea={false}
+              value={landForm.landAddress}
+              handleChange={(e) => handleFormFieldChange("landAddress", e.target.value)}
+            />
+          </div>
+
+          <div className="text-[#4eac6f] font-epilogue text-base sm:text-lg">
+            Land Area: {landArea} m²
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 mt-4 mb-14 sm:mt-6">
             {filePath ? (
-              <div className=" mt-10 flex justify-center items-center">
+              <div className="flex-1 flex justify-center lg:justify-start">
                 <img
-                  src={`${filePath ?? "/images/placeholderImage.jpg"}`}
-                  alt={""}
-                  className="rounded-[#35px]"
-                  height={400}
-                  width={400}
+                  src={filePath || "/images/placeholderImage.jpg"}
+                  alt="Land Document"
+                  className="rounded-lg object-cover w-full max-w-xs h-auto"
                 />
               </div>
             ) : (
-              <CustomButton
-                title="Upload Karta"
-                buttonType="button"
-                styles="w-48 border-gray-100 shadow ring-2 ring-gray-100 bg-gray-100 text-[#4eac6f] flex-shrink-0 h-[20px]"
-                handleClick={() => dispatch(setShowFileUpload(true))}
-              />
+              <div className="flex-1 flex justify-center lg:justify-start">
+                <CustomButton
+                  title="Upload Karta"
+                  buttonType="button"
+                  styles="w-full sm:w-48 h-12 bg-gray-100 text-[#4eac6f] border-gray-200 ring-2 ring-gray-100 shadow-md"
+                  handleClick={() => dispatch(setShowFileUpload(true))}
+                />
+              </div>
             )}
 
             {locationAddress ? (
-              <div className="mt-10 flex justify-center items-center h-[300px] w-[350px]">
-                <DisplayLand
-                  latandlongs={`${locationAddress}`}
-                  index={
-                    Math.floor(Math.random() * (324924234234 - +3453463 + 1)) +
-                    3453463
-                  }
-                />
+              <div className="flex-1 flex justify-center">
+                <div className="w-full h-40 sm:h-72">
+                  <DisplayLand latandlongs={locationAddress} index={Math.floor(Math.random() * 1_000_000)} />
+                </div>
               </div>
             ) : (
-              <CustomButton
-                title="Draw Land"
-                buttonType="button"
-                styles="w-48 border-gray-100 shadow ring-2 ring-gray-100 bg-gray-100 text-[#4eac6f] h-[20px]"
-                handleClick={() => dispatch(setShowMapbox(true))}
-              />
+              <div className="flex-1 flex justify-center lg:justify-start">
+                <CustomButton
+                  title="Draw Land"
+                  buttonType="button"
+                  styles="w-full sm:w-48 h-12 bg-gray-100 text-[#4eac6f] border-gray-200 ring-2 ring-gray-100 shadow-md"
+                  handleClick={() => dispatch(setShowMapbox(true))}
+                />
+              </div>
             )}
           </div>
-          <CustomButton
-            buttonType="submit"
-            title="Create Land"
-            styles="bg-[#4eac6f] text-white"
-          />
+
+          <div className="flex justify-center mt-12">
+            <CustomButton
+              buttonType="submit"
+              title="Create Land"
+              styles="w-full sm:w-60 h-12 bg-[#4eac6f] text-white font-semibold rounded-lg"
+            />
+          </div>
         </form>
       </div>
     </div>
