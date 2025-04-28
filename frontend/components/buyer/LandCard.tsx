@@ -14,15 +14,15 @@ const LandCard: React.FC<{ landItem: LandModel; index: number }> = ({
   useEffect(() => {}, []);
 
   return (
-    <div className="w-full p-4 md:p-6 bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 mb-6 border border-gray-200">
+    <div className="w-full p-4 md:p-6 bg-white rounded-xl hover:shadow-xl transition-shadow duration-300 mb-6 border border-gray-200">
       {/* Title and View Details Button */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-3">
-        <h1 className="font-mono font-semibold text-lg md:text-xl text-gray-800 truncate max-w-xs md:max-w-md">
+        <h1 className="font-mono font-semibold text-lg md:text-xl text-gray-800 truncate max-w-xs md:max-w-md lg:max-w-2xl">
           {landItem.title}
         </h1>
         <button
           onClick={() => router.push(`/p_buyer/${landItem["id"]}`)}
-          className="flex items-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 transform hover:scale-105 whitespace-nowrap"
+          className="flex items-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 transform hover:scale-105 whitespace-nowrap text-sm md:text-base"
         >
           <span className="mr-2">View Details</span>
           <svg
@@ -49,9 +49,9 @@ const LandCard: React.FC<{ landItem: LandModel; index: number }> = ({
       </p>
 
       {/* Main Content - Image and Details */}
-      <div className="flex flex-row md:flex-row gap-4 mb-4">
+      <div className="flex flex-col  md:flex-row md:mb-15 mt-4 gap-4 mb-4">
         {/* Map Display */}
-        <div className="w-full lg:w-2/5 h-48 md:h-56 rounded-lg overflow-hidden shadow-md">
+        <div className="w-full md:w-2/5 h-48 md:h-56 rounded-lg overflow-hidden shadow-md">
           <DisplayLand
             latandlongs={landItem.locationAddress as string}
             index={Math.floor(Math.random() * (324924234234 - +3453463 + 1)) + 3453463}
@@ -59,7 +59,7 @@ const LandCard: React.FC<{ landItem: LandModel; index: number }> = ({
         </div>
 
         {/* Document Image and Description */}
-        <div className="w-full lg:w-3/5 flex flex-col md:flex-row gap-4">
+        <div className="w-full md:w-3/5 md:mt-15 flex flex-col md:flex-row gap-4">
           <div className="w-full md:w-1/2 h-48 md:h-56 rounded-lg overflow-hidden shadow-md">
             <img
               src={`${landItem?.documentHash ?? "/images/placeholderImage.jpg"}`}
@@ -71,7 +71,7 @@ const LandCard: React.FC<{ landItem: LandModel; index: number }> = ({
       </div>
 
       {/* Description */}
-      <p className="w-full mb-4 md:w-1/2 text-gray-600 text-sm md:text-base line-clamp-5 md:line-clamp-6 mb-7">
+      <p className="w-full md:w-1/2 text-gray-600 text-sm md:text-base line-clamp-3 md:line-clamp-5 lg:line-clamp-6 mb-7">
         {landItem.detail}
       </p>
 
@@ -89,7 +89,7 @@ const LandCard: React.FC<{ landItem: LandModel; index: number }> = ({
             />
             <span
               className={
-                landItem.isVerified ? "text-green-600" : "text-yellow-600"
+                landItem.isVerified ? "text-green-600" : "text-blue-600"
               }
             >
               {landItem.isVerified ? "Verified" : "Unverified"}
@@ -117,14 +117,14 @@ const LandCard: React.FC<{ landItem: LandModel; index: number }> = ({
               alt="Location"
               className="mr-1"
             />
-            <span className="text-gray-600 truncate max-w-xs">
+            <span className="text-gray-600 truncate max-w-xs md:max-w-sm lg:max-w-md">
               {landItem.landAddress}, Ethiopia
             </span>
           </div>
         </div>
 
         {/* Posted Date */}
-        <div className="text-sm md:text-base text-gray-500">
+        <div className="text-sm md:text-base text-gray-500 whitespace-nowrap">
           Posted{" "}
           <span className="font-medium">
             {moment(landItem.postedDate).fromNow()}
