@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { useAppDispatch, useAppSelector } from "@/lib/appstate";
@@ -11,60 +11,18 @@ const Filter = () => {
   const { avaliableLands } = useAppSelector(LandSelector);
 
   const [sliderValue, setSliderValue] = useState(0);
-
-  const handleSliderChange = (value: any) => {
-    setSliderValue(value);
-    const filteredLands = avaliableLands?.filter((land) => {
-      const landPrice = parseFloat(land.price!);
-      return landPrice <= sliderValue;
-    });
-
-    dispatch(getAllAvaliableLands(filteredLands as LandModel[]));
-    
-  };
-
   const [landSliderValue, setLandSliderValue] = useState(0);
-
-  const handleLandSliderChange = (value: any) => {
-    setLandSliderValue(value);
-    const filteredLands = avaliableLands?.filter((land) => {
-      const landArea = parseFloat(land.area!);
-      return landArea <= sliderValue;
-    });
-
-    dispatch(getAllAvaliableLands(filteredLands as LandModel[]));
-  };
-
   const [datefilterOption, setDateFilterOption] = useState("");
-  const handleFilterOptionChange = (event: any) => {
-    setDateFilterOption(event.target.value);
+  
+  const [allLands, setAllLands] = useState<LandModel[]>([]);
+  const [filteredLands, setFilteredLands] = useState<LandModel[]>([]);
 
-    const filteredLands = avaliableLands?.filter((land) => {
-      if (datefilterOption === "today") {
-        const postedDate = new Date(land.postedDate!);
-        const today = new Date();
-        return isSameDate(postedDate, today);
-      }
-
-      if (datefilterOption === "yesterday") {
-        const postedDate = new Date(land.postedDate!);
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        return isSameDate(postedDate, yesterday);
-      }
-
-      if (datefilterOption === "lastMonth") {
-        const postedDate = new Date(land.postedDate!);
-        const currentDate = new Date();
-        const lastMonth = new Date();
-        lastMonth.setMonth(lastMonth.getMonth() - 1);
-        return postedDate >= lastMonth && postedDate < currentDate;
-      }
-      return true;
-    });
-
-    dispatch(getAllAvaliableLands(filteredLands as LandModel[]));
-  };
+  useEffect(() => {
+    if (avaliableLands && avaliableLands.length) {
+      setAllLands(avaliableLands);
+      setFilteredLands(avaliableLands);
+    }
+  }, [avaliableLands]);
 
   const isSameDate = (date1: any, date2: any) => {
     return (
@@ -74,23 +32,70 @@ const Filter = () => {
     );
   };
 
+  const applyFilters = (priceLimit: number, areaLimit: number, dateOption: string) => {
+    let updatedLands = [...allLands];
+
+    if (priceLimit) {
+      updatedLands = updatedLands.filter((land) => parseFloat(land.price!) <= priceLimit);
+    }
+
+    if (areaLimit) {
+      updatedLands = updatedLands.filter((land) => parseFloat(land.area!) <= areaLimit);
+    }
+
+    if (dateOption && dateOption !== "all") {
+      updatedLands = updatedLands.filter((land) => {
+        const postedDate = new Date(land.postedDate!);
+        const today = new Date();
+        if (dateOption === "today") {
+          return isSameDate(postedDate, today);
+        } else if (dateOption === "yesterday") {
+          const yesterday = new Date();
+          yesterday.setDate(today.getDate() - 1);
+          return isSameDate(postedDate, yesterday);
+        } else if (dateOption === "lastmonth") {
+          const lastMonth = new Date();
+          lastMonth.setMonth(today.getMonth() - 1);
+          return postedDate >= lastMonth && postedDate <= today;
+        }
+        return true;
+      });
+    }
+
+    setFilteredLands(updatedLands);
+    dispatch(getAllAvaliableLands(updatedLands as LandModel[]));
+  };
+
+  const handleSliderChange = (value: any) => {
+    setSliderValue(value);
+    applyFilters(value, landSliderValue, datefilterOption);
+  };
+
+  const handleLandSliderChange = (value: any) => {
+    setLandSliderValue(value);
+    applyFilters(sliderValue, value, datefilterOption);
+  };
+
+  const handleFilterOptionChange = (event: any) => {
+    const value = event.target.value;
+    setDateFilterOption(value);
+    applyFilters(sliderValue, landSliderValue, value);
+  };
+
   return (
     <div className="bg-gradient-to-b from-white to-transparent rounded-lg shadow-lg p-6 w-[350px] h-[83vh] border-2 ">
       <h2 className="text-lg font-medium mb-4">Filters</h2>
-      <div className="flex flex-col justify-between  gap-[50px]">
+      <div className="flex flex-col justify-between gap-[50px]">
         {/* Price Range filter */}
-
         <div className="">
-          <label className="block text-gray-700 font-medium mb-2">
-            Price Range:
-          </label>
+          <label className="block text-gray-700 font-medium mb-2">Price Range:</label>
           <div className="flex items-center flex-col">
             <div className="w-[300px] pr-4 ml-5">
               <Slider
                 value={sliderValue}
                 min={0}
                 max={100000}
-                defaultValue={[0, 100000]}
+                defaultValue={[0, 10000000]}
                 onChange={handleSliderChange}
                 trackStyle={[{ backgroundColor: "#48BB78" }]}
                 step={1}
@@ -114,21 +119,19 @@ const Filter = () => {
                   height: "5px",
                   borderRadius: "5px",
                 }}
-              />{" "}
+              />
             </div>
             <div className="flex justify-between mt-2 flex-row">
               <span className="text-gray-600 font-thin">{sliderValue} - </span>
-              <span className="text-gray-600 font-thin">1000000 Matic</span>
+              <span className="text-gray-600 font-thin">10000000 Matic</span>
             </div>
           </div>
         </div>
 
         {/* Posted date filter */}
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">
-            Posted date:
-          </label>
-          <div className="flex  flex-col justify-start px-2  mt-1 ">
+          <label className="block text-gray-700 font-medium mb-2">Posted date:</label>
+          <div className="flex flex-col justify-start px-2 mt-1">
             <label className="">
               <input
                 type="checkbox"
@@ -137,7 +140,7 @@ const Filter = () => {
                 checked={datefilterOption === "all"}
                 onChange={handleFilterOptionChange}
               />
-              <span className="ml-2  text-gray-700">All</span>
+              <span className="ml-2 text-gray-700">All</span>
             </label>
             <label className="">
               <input
@@ -147,7 +150,7 @@ const Filter = () => {
                 checked={datefilterOption === "today"}
                 onChange={handleFilterOptionChange}
               />
-              <span className="ml-2  text-gray-700">Today</span>
+              <span className="ml-2 text-gray-700">Today</span>
             </label>
 
             <label className="">
@@ -176,9 +179,7 @@ const Filter = () => {
 
         {/* Land area filter */}
         <div>
-          <label className="block text-gray-700 font-medium mb-2">
-            Land area:
-          </label>
+          <label className="block text-gray-700 font-medium mb-2">Land area:</label>
           <div className="flex items-center flex-col">
             <div className="w-[300px] pr-4 ml-5">
               <Slider
@@ -207,7 +208,7 @@ const Filter = () => {
                   height: "5px",
                   borderRadius: "5px",
                 }}
-              />{" "}
+              />
             </div>
             <div className="flex justify-between mt-2 flex-row">
               <span className="text-gray-600 font-thin">
