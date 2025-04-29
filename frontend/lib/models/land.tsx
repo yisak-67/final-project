@@ -82,6 +82,8 @@ export enum RequestStutus {
   Accepted = "Accepted",
   Rejected = "Rejected",
   Completed = "Completed",
+  PAID = "PAID",
+  REQUESTED = "REQUESTED",
 }
 
 export interface LocateMapReturnType {
