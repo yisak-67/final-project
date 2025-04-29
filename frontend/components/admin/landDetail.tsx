@@ -11,6 +11,10 @@ const LandDetailCard = ({
   index: number;
   button?: JSX.Element;
 }) => {
+
+
+
+  
   return (
     <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl m-4 ">
       <div className="md:flex gap-4">
