@@ -50,6 +50,7 @@ const LoginActivity: React.FC = () => {
                   <button
                     className="text-red-500 hover:text-red-700"
                     onClick={() => removeLoginActivity(index)}
+                    title="Remove login activity"
                   >
                     <FiX />
                   </button>

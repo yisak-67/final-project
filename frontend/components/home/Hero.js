@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-
 import { motion } from "framer-motion";
 import getScrollAnimation from "./getScrollAnimation";
 import ScrollAnimationWrapper from "./ScrollAnimationWrapper";
@@ -11,40 +10,49 @@ const Hero = () => {
   const scrollAnimation = useMemo(() => getScrollAnimation(), []);
 
   return (
-    <div className="max-w-screen-xl mt-24 px-8 xl:px-16 mx-auto" id="about">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16 md:pt-40 md:pb-24">
       <ScrollAnimationWrapper>
         <motion.div
-          className="grid grid-flow-row sm:grid-flow-col grid-rows-2 md:grid-rows-1 sm:grid-cols-2 gap-8 py-6 sm:py-16"
+          className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center"
           variants={scrollAnimation}
         >
-          <div className=" flex flex-col justify-center items-start row-start-2 sm:row-start-1">
-            <h1 className="text-3xl lg:text-4xl xl:text-5xl font-medium text-black-600 leading-normal">
-              Buy, Sell, Register <strong>lands</strong> with ease!
+          <div className="order-2 md:order-1 text-center md:text-left">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+              Buy, Sell, Register <span className="text-green-600">Lands</span>{" "}
+              with Ease!
             </h1>
-            <p className="text-black-500 mt-4 mb-6">
+            <p className="text-lg sm:text-xl text-gray-600 mb-8 max-w-lg mx-auto md:mx-0">
               Simplifying Land Management. Register, sell, and buy land
               effortlessly with our intuitive platform. Access resources,
-              streamline transactions, and make informed decisions. Experience
-              seamless land administration today.
+              streamline transactions, and make informed decisions.
             </p>
-
-            <button
-              onClick={() => router.push("/p_auth/register")}
-              className={
-                "py-3 lg:py-4 px-12 lg:px-16 text-white-500 font-semibold rounded-lg bg-green-500 hover:shadow-green-md transition-all outline-none "
-              }
-            >
-              Get Started
-            </button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+              <button
+                onClick={() => router.push("/p_auth/register")}
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                Get Started
+              </button>
+              <button
+                onClick={() => router.push("#feature")}
+                className="border-2 border-green-600 text-green-600 hover:bg-green-50 font-semibold py-3 px-8 rounded-full transition-all duration-300"
+              >
+                Learn More
+              </button>
+            </div>
           </div>
-          <div className="flex w-full">
-            <motion.div className="h-full w-full" variants={scrollAnimation}>
+          <div className="order-1 md:order-2">
+            <motion.div
+              className="relative w-full h-64 sm:h-80 md:h-96 lg:h-[28rem]"
+              variants={scrollAnimation}
+            >
               <Image
                 src="/images/Illustration1.png"
                 alt="Hero image"
+                layout="fill"
+                objectFit="contain"
                 quality={100}
-                width={612}
-                height={383}
+                priority
               />
             </motion.div>
           </div>
