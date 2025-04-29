@@ -53,10 +53,16 @@ const BuyerNavbar = () => {
   };
 
   return (
-    <div className="flex flex-row items-center justify-between w-full ">
-      <div className="flex flex-row justify-center items-center  ">
-        <img height={50} width={150} src="/Icons/newlogo.png" />
-        <div className="flex flex-row gap-4 justify-center items-center flex-wrap">
+    <div className="flex flex-row items-center justify-between w-full py-4 px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-row justify-start items-center">
+        <img
+          height={40}
+          width={120}
+          src="/Icons/newlogo.png"
+          className="sm:h-10 sm:w-30 h-8 w-24"
+          alt="Logo"
+        />
+        <div className="flex flex-row gap-2 sm:gap-4 justify-center items-center flex-wrap ml-2 sm:ml-6">
           {navbarItems.map((item, index) => (
             <p
               key={index}
@@ -68,7 +74,7 @@ const BuyerNavbar = () => {
                     : "/p_buyer/request_page"
                 )
               }
-              className={`cursor-pointer font-serf font-semibold sm:text-[16px] text-[10x] text-black leading-[25px] pb-2 border-b-[4px] ${
+              className={`cursor-pointer font-serif font-semibold text-sm sm:text-base md:text-lg text-black leading-5 sm:leading-6 pb-1 sm:pb-2 border-b-2 sm:border-b-4 ${
                 buyerActiveLink == index ? " border-green-500" : "border-white"
               }`}
             >
@@ -77,51 +83,48 @@ const BuyerNavbar = () => {
           ))}
         </div>
       </div>
-      <div className="mr-5 px-4 py-10 flex flex-row gap-2 relative">
+      <div className="mr-2 sm:mr-5 flex flex-row gap-2 relative items-center">
+        {/* <FaRegBell className="text-xl sm:text-2xl cursor-pointer text-gray-600" /> */}
         <div
           className="flex flex-row items-center justify-center cursor-pointer"
           onClick={toggleDropdown}
         >
-          <p>{user?.fullName}</p>
-          <img src="/Icons/profile.svg" alt="Profile Icon" className="ml-2" />
+          <p className="text-sm sm:text-base font-medium text-gray-700 hidden sm:block">{user?.fullName}</p>
+          <img
+            src="/Icons/profile.svg"
+            alt="Profile Icon"
+            className="ml-2 h-8 w-8 rounded-full border border-gray-300"
+          />
         </div>
         {showDropdown && (
           <div
             ref={dropdownRef}
-            className="absolute right-0 mt-10 w-[300px] bg-white rounded-lg py-2 border-t-2 border-green-600 shadow-xl md:pl-2"
+            className="absolute right-0 mt-2 w-48 sm:w-64 bg-white rounded-md shadow-xl border border-gray-200 overflow-hidden z-10"
           >
             {/* Dropdown content */}
-            <div
-              style={{ backgroundColor: "rgb(245, 246, 250)" }}
-              className="flex items-start mt-[-9px] ml-[-9px] mb-2 px-4 py-2 rounded-lg"
-            >
-              <img
-                src="/Icons/profile.svg"
-                alt="Avatar"
-                className="rounded-full mr-4 mt-4"
-              />
-              <div>
-                <h2 className="text-xl font-bold">{user?.fullName}</h2>
-                <p className="text-gray-600">{user?.email}</p>
-              </div>
+            <div className="px-4 mt-40 py-2 bg-gray-50">
+              <h2 className="text-base font-semibold text-gray-800">{user?.fullName}</h2>
+              <p className="text-sm text-gray-600">{user?.email}</p>
             </div>
-
             <a
               href="/p_auth/buyerProfile"
-              className="px-4 py-2 flex flex-row items-center hover:bg-gray-100"
+              className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
             >
-              <FaRegUser className="text-red-500 mr-3" />
-              View Profile
+              <div className="flex items-center">
+                <FaRegUser className="text-gray-500 mr-2" />
+                View Profile
+              </div>
             </a>
-
-            <hr className="border-gray-300 my-3" />
-            <a
+            <hr className="border-gray-200 my-1" />
+            <button
               onClick={onLogoutClicked}
-              className="px-4 py-4 flex items-center hover:bg-gray-200"
+              className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
             >
-              <FaSignOutAlt className="text-green-500 mr-3" />
-              Sign Out
-            </a>
+              <div className="flex items-center">
+                <FaSignOutAlt className="text-red-500 mr-2" />
+                Sign Out
+              </div>
+            </button>
           </div>
         )}
       </div>
