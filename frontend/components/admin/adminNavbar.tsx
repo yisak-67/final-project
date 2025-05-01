@@ -42,7 +42,7 @@ const AdminNavbar: React.FC = () => {
   };
 
   return (
-    <div className="ml-[270px] h-[40px] flex flex-row items-center justify-between">
+    <div className="ml-[270px] h-[120px] flex flex-row items-center justify-between">
       <div></div>
       <div className="mr-5 px-4 py-10 flex flex-row gap-2 relative">
         <div

@@ -125,7 +125,7 @@ const AllLands = () => {
           </div>
         ) : (
           <div className="flex justify-center items-center">
-            You don't have any land to be verified!
+            You dont have any land to be verified!
           </div>
         )
       ) : (
