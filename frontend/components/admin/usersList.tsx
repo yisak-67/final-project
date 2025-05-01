@@ -3,7 +3,6 @@ import Pagination from "react-js-pagination";
 export interface User {
   profile: string;
   fullName: string;
-  dateJoined: Date;
   status: string;
 }
 interface Props {
@@ -27,9 +26,7 @@ const UsersList: React.FC<Props> = ({ allUsers }) => {
             <th className="py-3 px-6 bg-gray-100 font-bold  text-sm text-gray-600 border-b border-gray-200">
               Full name
             </th>
-            <th className="py-3 px-6 bg-gray-100 font-bold  text-sm text-gray-600 border-b border-gray-200">
-              Date Joined
-            </th>
+           
             <th className="py-3 px-6 bg-gray-100 font-bold  text-sm text-gray-600 border-b border-gray-200">
               Status
             </th>
@@ -52,9 +49,7 @@ const UsersList: React.FC<Props> = ({ allUsers }) => {
               <td className="py-4 px-6 text-center border-b border-gray-200">
                 {user.fullName}
               </td>
-              <td className="py-4 px- text-center border-b border-gray-200">
-                {user.dateJoined.toDateString()}
-              </td>
+            
               <td className="py-4 px-6 text-center border-b border-gray-200">
                 <div
                   className={`rounded-full py-1 px-3 text-sm font-semibold ${
