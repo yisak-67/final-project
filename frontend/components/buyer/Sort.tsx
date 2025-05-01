@@ -6,6 +6,7 @@ const Sort = () => {
       <p className="ml-2">Sort by</p>
       <div className="ml-10">
         <select
+          aria-label="Sort by time"
           className="block appearance-none w-full bg-white border border-gray-300 py-1 px-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
           value={""}
           onChange={() => {}}

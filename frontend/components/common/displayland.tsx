@@ -27,7 +27,7 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
 
   useEffect(() => {
     if (!mapContainer.current) return;
-    
+
     setIsLoading(true);
     setError(null);
 
@@ -35,7 +35,7 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
       if (!latandlongs) throw new Error("No coordinates provided");
 
       let coordinates: number[][];
-      
+
       if (Array.isArray(latandlongs)) {
         coordinates = latandlongs[0];
       } else if (typeof latandlongs === 'string') {
@@ -54,11 +54,11 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
       }
 
       // Calculate the bounding box for better view
-      const bbox = turf.bbox(turf.polygon([coordinates]));
+      const bbox = turf.bbox(turf.polygon([coordinates])).slice(0, 4) as [number, number, number, number];
       const map = new mapboxgl.Map({
         container: mapContainer.current,
         style: "mapbox://styles/mapbox/satellite-streets-v12",
-        bounds: bbox,
+        bounds: bbox as [number, number, number, number],
         fitBoundsOptions: {
           padding: isMobile ? 20 : 50, // Less padding on mobile
           maxZoom: 18 // Limit maximum zoom
@@ -91,9 +91,9 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
             type: "fill",
             source: `land-${index}`,
             paint: {
-              "fill-color": "#4eac6f",
-              "fill-opacity": 0.3,
-              "fill-outline-color": "#4eac6f"
+              "fill-color": "#3b82f6", // Tailwind blue-500
+              "fill-opacity": 0.4,
+              "fill-outline-color": "#22c55e" // Tailwind green-500
             }
           });
 
@@ -103,8 +103,8 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
             type: "fill",
             source: `land-${index}`,
             paint: {
-              "fill-color": "#4eac6f",
-              "fill-opacity": 0.1,
+              "fill-color": "#60a5fa", // Tailwind blue-300
+              "fill-opacity": 0.2,
               "fill-translate": [0, 0]
             }
           });
@@ -115,7 +115,7 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
             type: "line",
             source: `land-${index}`,
             paint: {
-              "line-color": "#4eac6f",
+              "line-color": "#1d4ed8", // Tailwind blue-700
               "line-width": isMobile ? 2 : 3,
               "line-opacity": 0.8,
               "line-dasharray": [2, 2]
@@ -124,14 +124,22 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
 
           // Add markers with improved styling
           addDistanceMarkers(map, coordinates);
-          
+
           // Add a marker at each vertex
           addVertexMarkers(map, coordinates);
-          
+
           setIsLoading(false);
         } catch (layerError) {
-          throw new Error(`Map rendering failed`);
+          console.error("Map layer error:", layerError);
+          setError(`Map rendering failed: ${layerError}`);
+          setIsLoading(false);
         }
+      });
+
+      map.on('error', (err) => {
+        console.error("Mapbox GL error:", err);
+        setError("Failed to load map");
+        setIsLoading(false);
       });
 
       return () => {
@@ -152,10 +160,11 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
       Object.assign(el.style, {
         width: isMobile ? '12px' : '16px',
         height: isMobile ? '12px' : '16px',
-        backgroundColor: '#4eac6f',
+        backgroundColor: '#2563eb', // Tailwind blue-600
         borderRadius: '50%',
         border: '2px solid white',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
       });
 
       new mapboxgl.Marker(el)
@@ -183,23 +192,24 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
 
         const popup = document.createElement("div");
         popup.className = "distance-marker";
-        popup.innerHTML = `${length.toFixed(2)}m`;
+        popup.innerHTML = `<span class="font-semibold">${length.toFixed(2)}m</span>`;
         Object.assign(popup.style, {
-          background: "#FFFFFF",
-          color: "#4eac6f",
+          background: "#f9fafb", // Tailwind gray-50
+          color: "#1e3a8a", // Tailwind indigo-800
           width: isMobile ? "60px" : "70px",
-          padding: isMobile ? "4px 2px" : "6px 4px",
+          padding: isMobile ? "6px 4px" : "8px 6px",
           fontSize: isMobile ? "10px" : "12px",
-          borderRadius: "12px",
+          borderRadius: "0.75rem", // Tailwind rounded-lg
           textAlign: "center",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-          fontWeight: "600",
-          border: "1px solid #4eac6f"
+          boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+          fontWeight: "500",
+          border: "1px solid #3b82f6" // Tailwind blue-500
         });
 
-        const marker = new mapboxgl.Marker({ 
+        const marker = new mapboxgl.Marker({
           element: popup,
-          anchor: 'center'
+          anchor: 'center',
+          offset: [0, -10] // Adjust to prevent overlap with midpoint
         }).setLngLat(midpoint.geometry.coordinates as [number, number])
           .addTo(map);
 
@@ -215,26 +225,26 @@ const DisplayLand: React.FC<DisplayLandProps> = ({ latandlongs, index }) => {
       <div
         ref={mapContainer}
         className={`
-          rounded-lg shadow-lg border border-gray-200
-          h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] 
+          rounded-lg shadow-md border border-gray-200
+          h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px]
           w-full
           relative overflow-hidden
         `}
       >
         {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100/50">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#4eac6f]"></div>
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100/75 rounded-lg">
+            <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
           </div>
         )}
-        
+
         {error && (
-          <div className="absolute inset-0 bg-red-50/90 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-red-50/90 flex items-center justify-center p-6 rounded-lg">
             <div className="text-center max-w-xs">
-              <p className="font-bold text-red-600 text-sm sm:text-base">Map Error</p>
-              <p className="text-red-500 text-xs sm:text-sm mt-1">{error}</p>
-              <button 
+              <p className="font-bold text-red-600 text-sm sm:text-base mb-2">Map Error</p>
+              <p className="text-red-500 text-xs sm:text-sm mb-3">{error}</p>
+              <button
                 onClick={() => window.location.reload()}
-                className="mt-3 px-3 py-1 bg-red-100 rounded text-xs sm:text-sm hover:bg-red-200 transition"
+                className="px-4 py-2 bg-red-100 rounded-md text-red-600 text-xs sm:text-sm hover:bg-red-200 transition"
               >
                 Reload Map
               </button>
