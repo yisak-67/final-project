@@ -33,7 +33,7 @@ const UnverifiedLands = () => {
       {landsFetched ? (
         unVerifiedLands.length ? (
           <div className="container mx-auto h-full ">
-            <div className="flex flex-wrap gap-[15px] mt-[20px] w-full p-2">
+            <div className="flex flex-wrap gap-[15px] mt-[20px] w-full p-2 mb-10px">
               {unVerifiedLands.map((land, i: number) => (
                 <div
                   key={i}
@@ -42,7 +42,7 @@ const UnverifiedLands = () => {
                   <CustomButton
                     title={"Get Land History"}
                     buttonType={undefined}
-                    styles="border border-green-500 text-green-500 rounded-md py-2 px-4 transition duration-300 hover:bg-green-500 hover:text-white"
+                    styles="border  mb-10  border-green-500 text-green-500 rounded-md py-2 px-4 transition duration-300 hover:bg-green-500 hover:text-white"
                     handleClick={() => {
                       getLandHistory(land.id?.toString() || "");
                     }}
@@ -103,7 +103,7 @@ const UnverifiedLands = () => {
           </div>
         ) : (
           <div className="flex justify-center items-center">
-            You don't have any land to be verified!
+            You dont have any land to be verified!
           </div>
         )
       ) : (
