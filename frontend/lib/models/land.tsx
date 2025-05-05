@@ -53,6 +53,7 @@ export const parseRequestData = (data: any): RequestModel => {
     buyerId: data["2"],
     landId: data["3"].toString(),
     isPaymentDone: data["4"] == false ? "Not Completed" : "Completed",
+    price: Number(data["6"]), // Assuming price is at index 6
   };
 };
 
@@ -71,6 +72,38 @@ export interface RequestModel {
   buyerId?: string;
   isPaymentDone?: string;
   landId: string;
+  postDate?: Date;
+  landInfo?: LandModel;
+  buyerInfo?: User;
+  sellerInfo?: User;
+  isVerified?: boolean;
+  isAccepted?: boolean;
+  isRejected?: boolean;
+  isCompleted?: boolean;
+  isRequested?: boolean;
+  isPaid?: boolean;
+ landTitle?: string;
+ locationAddress?: string;
+ landAddress?: string;
+  area?: string;
+  documentHash?: string;
+  detail?: string;
+  postedDate?: Date;
+  landCoordinates?: LandCoordinates;
+  landPrice?: number; // Added landPrice property
+  buyerPrice?: number; // Added buyerPrice property
+  sellerPrice?: number; // Added sellerPrice property
+  
+ 
+ 
+ price: number;
+
+  blockNumber?: number; // Added blockNumber property
+
+  // other properties...
+
+
+
 }
 export interface LandHistory {
   user: User;

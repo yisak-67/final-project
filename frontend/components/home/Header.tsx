@@ -111,7 +111,7 @@ const Header = () => {
               >
                 Sign Up
               </button>
-              <button
+              {/* <button
                 onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
                 className="p-2 rounded-full text-gray-700 hover:text-green-600 focus:outline-none"
                 aria-label="Toggle theme"
@@ -121,7 +121,7 @@ const Header = () => {
                 ) : (
                   <FiMoon className="w-5 h-5" />
                 )}
-              </button>
+              </button> */}
             </div>
           </div>
 

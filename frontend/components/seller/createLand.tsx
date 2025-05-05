@@ -60,7 +60,6 @@ const CreateLand: React.FC = () => {
       };
 
       const result = await createLandWithContract({ ...landData, isVerified: false });
-
       console.log("Created Land:", result);
       router.push("/p_seller/ManageLand");
     } catch (error) {
@@ -71,31 +70,31 @@ const CreateLand: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-start mt-5 px-4 sm:px-6 lg:px-8 min-h-screen">
+    <div className="pt-16 md:pt-0 flex justify-center items-start px-2 sm:px-4 md:px-6 min-h-screen bg-gray-50">
       {isFileUploadShowing && <FileUpload />}
       {isLocateLandShowing && <LocateMap />}
       {isLoading && <Loader />}
       <ToastContainer />
 
-      <div className="p-4 sm:p-6 lg:p-8 mb-10 border border-gray-200 shadow-lg w-full max-w-5xl rounded-xl bg-white mx-2 sm:mx-4">
-        <h1 className="font-epilogue text-2xl sm:text-3xl font-semibold text-black mb-4 sm:mb-6">Create Land</h1>
+      <div className="p-4 sm:p-6 md:p-8 my-4 md:my-6 border border-gray-200 shadow-sm w-full max-w-5xl rounded-xl bg-white mx-2 sm:mx-4">
+        <h1 className="font-epilogue text-xl sm:text-2xl md:text-3xl font-semibold text-gray-800 mb-4 sm:mb-6">Create Land Listing</h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6 sm:gap-8">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:gap-6">
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
             <div className="flex-1">
               <CustomFormField
                 LableName="Land Title *"
-                placeholder="Apartment"
+                placeholder="e.g. Prime Commercial Land"
                 inputType="text"
                 isTextArea={false}
                 value={landForm.title || ""}
                 handleChange={(e) => handleFormFieldChange("title", e.target.value)}
               />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 ">
               <CustomFormField
-                LableName="Price *"
-                placeholder="1000000"
+                LableName="Price (ETH) *"
+                placeholder="e.g. 1,000,000"
                 inputType="text"
                 isTextArea={false}
                 value={landForm.price}
@@ -106,8 +105,8 @@ const CreateLand: React.FC = () => {
 
           <div>
             <CustomFormField
-              LableName="Detail *"
-              placeholder="Land Detail"
+              LableName="Description *"
+              placeholder="Detailed description of the land including features, nearby amenities, etc."
               inputType="text"
               isTextArea
               value={landForm.detail}
@@ -117,8 +116,8 @@ const CreateLand: React.FC = () => {
 
           <div>
             <CustomFormField
-              LableName="Land Address *"
-              placeholder="5 Kilo"
+              LableName="Physical Address *"
+              placeholder="e.g. Bole, Near Friendship Center"
               inputType="text"
               isTextArea={false}
               value={landForm.landAddress}
@@ -126,53 +125,70 @@ const CreateLand: React.FC = () => {
             />
           </div>
 
-          <div className="text-[#4eac6f] font-epilogue text-base sm:text-lg">
-            Land Area: {landArea} m²
+          <div className="text-green-600 font-epilogue text-sm sm:text-base">
+            Land Area: {landArea || "0"} m²
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 mt-4 mb-14 sm:mt-6">
+          <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 mt-2 mb-8 sm:mt-4 sm:mb-10">
             {filePath ? (
-              <div className="flex-1 flex justify-center lg:justify-start">
-                <img
-                  src={filePath || "/images/placeholderImage.jpg"}
-                  alt="Land Document"
-                  className="rounded-lg object-cover w-full max-w-xs h-auto"
-                />
+              <div className="flex-1 flex flex-col items-center">
+                <div className="w-full max-w-xs bg-gray-100 rounded-lg overflow-hidden">
+                  <img
+                    src={filePath || "/images/placeholderImage.jpg"}
+                    alt="Land Document"
+                    className="w-full h-48 object-contain"
+                  />
+                </div>
+                <button 
+                  type="button"
+                  onClick={() => dispatch(setShowFileUpload(true))}
+                  className="mt-2 text-sm text-green-600 hover:text-green-700"
+                >
+                  Change Document
+                </button>
               </div>
             ) : (
-              <div className="flex-1 flex justify-center lg:justify-start">
+              <div className="flex-1 flex justify-center">
                 <CustomButton
-                  title="Upload Karta"
+                  title="Upload Title Deed"
                   buttonType="button"
-                  styles="w-full sm:w-48 h-12 bg-gray-100 text-[#4eac6f] border-gray-200 ring-2 ring-gray-100 shadow-md"
+                  styles="w-full sm:w-48 h-12 bg-gray-50 text-green-600 border border-gray-300 hover:bg-gray-100 transition"
                   handleClick={() => dispatch(setShowFileUpload(true))}
                 />
               </div>
             )}
 
             {locationAddress ? (
-              <div className="flex-1 flex justify-center">
-                <div className="w-full h-40 sm:h-72">
+              <div className="flex-1 flex flex-col items-center">
+                <div className="w-full h-40 sm:h-48 md:h-56 bg-gray-100 rounded-lg overflow-hidden">
                   <DisplayLand latandlongs={locationAddress} index={Math.floor(Math.random() * 1_000_000)} />
                 </div>
+                <button 
+                  type="button"
+                  onClick={() => dispatch(setShowMapbox(true))}
+                  className="mt-2 text-sm text-green-600 hover:text-green-700"
+                >
+                  Redraw Boundary
+                </button>
               </div>
             ) : (
-              <div className="flex-1 flex justify-center lg:justify-start">
+              <div className="flex-1 flex justify-center">
                 <CustomButton
-                  title="Draw Land"
+                  title="Draw Land Boundary"
                   buttonType="button"
-                  styles="w-full sm:w-48 h-12 bg-gray-100 text-[#4eac6f] border-gray-200 ring-2 ring-gray-100 shadow-md"
+                  styles="w-full sm:w-48 h-12 bg-gray-50 text-green-600 border border-gray-300 hover:bg-gray-100 transition"
                   handleClick={() => dispatch(setShowMapbox(true))}
                 />
               </div>
             )}
           </div>
 
-          <div className="flex justify-center mt-12">
+          <div className="flex justify-center mt-6 sm:mt-8">
             <CustomButton
               buttonType="submit"
-              title="Create Land"
-              styles="w-full sm:w-60 h-12 bg-[#4eac6f] text-white font-semibold rounded-lg"
+              title={isLoading ? "Processing..." : "Create Listing"}
+              styles="w-full sm:w-64 h-12 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition"
+              disabled={isLoading}
             />
           </div>
         </form>

@@ -94,7 +94,7 @@ const Filter = () => {
               <Slider
                 value={sliderValue}
                 min={0}
-                max={100000}
+                max={10000000}
                 defaultValue={[0, 10000000]}
                 onChange={handleSliderChange}
                 trackStyle={[{ backgroundColor: "#48BB78" }]}
@@ -185,8 +185,8 @@ const Filter = () => {
               <Slider
                 value={landSliderValue}
                 min={0}
-                max={100000}
-                defaultValue={[0, 100000]}
+                max={10000000}
+                defaultValue={[0, 10000000]}
                 onChange={handleLandSliderChange}
                 trackStyle={[{ backgroundColor: "#48BB78" }]}
                 handleStyle={[

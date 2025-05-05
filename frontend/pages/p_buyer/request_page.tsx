@@ -1,14 +1,14 @@
 import BuyerLayout from "@/layout/BuyerLayout";
 import React, { useEffect, useState } from "react";
 import { Table } from "antd";
+import { Breakpoint } from "antd/es/_util/responsiveObserver";
 import { getSentRequestsidList } from "@/lib/services/blockchainService/requestcontractServices";
 import { RequestModel, RequestStutus } from "@/lib/models/land";
-import { CustomButton, Loader } from "@/components/common";
+import { Loader } from "@/components/common";
 import { makePaymentUsingWallet } from "@/lib/services/blockchainService/paymentcontractServices";
 
 const Request_page = () => {
   const [sentRequests, setSentRequests] = useState<RequestModel[]>([]);
-
   const [isOnPayment, setIsOnPayment] = useState(false);
   const [paymentMessage, setPaymentMessage] = useState<string>("");
 
@@ -24,57 +24,69 @@ const Request_page = () => {
 
   const handlePayment = async (id: number, userAddress: string) => {
     setIsOnPayment(true);
-    var response = await makePaymentUsingWallet(id, userAddress);
+    const response = await makePaymentUsingWallet(id, userAddress);
     if (response?.status) {
-      setPaymentMessage("Sucessfully Paid!");
+      setPaymentMessage("✅ Successfully Paid!");
+      // Update the specific request to reflect payment status
+      setSentRequests((prevRequests) =>
+        prevRequests.map((request) =>
+          Number(request.requestId) === id
+            ? { 
+                ...request, 
+                isPaymentDone: "Completed", 
+                status: RequestStutus.PAID 
+              }
+            : request
+        )
+      );
     }
     setIsOnPayment(false);
   };
 
   const columns = [
     {
-      title: "Request Id",
+      title: "Request ID",
       dataIndex: "requestId",
-      key: "requestId",
+      responsive: ["xs", "sm", "md", "lg"] as Breakpoint[],
     },
     {
       title: "Seller ID",
       dataIndex: "sellerId",
-      key: "sellerId",
+      responsive: ["sm", "md", "lg"] as Breakpoint[],
     },
     {
       title: "Buyer ID",
       dataIndex: "buyerId",
       key: "buyerId",
+      responsive: ["sm", "md", "lg"] as Breakpoint[],
     },
     {
       title: "Payment Status",
       dataIndex: "isPaymentDone",
       key: "isPaymentDone",
+      responsive: ["md", "lg"] as Breakpoint[],
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      responsive: ["md", "lg"],
     },
     {
       title: "",
-      dataIndex: "",
-      Key: "payment",
-      render: (text: any, record: any) => (
-        <div className="w-full h-10 flex justify-end ">
+      key: "payment",
+      render: (text: any, record: RequestModel) => (
+        <div className="w-full flex justify-end">
           <button
-            disabled={record.status === RequestStutus.Requested ? true : false}
-            className={` text-white rounded-md p-2 ${
-              record.status === RequestStutus.Requested
-                ? "bg-gray-200"
-                : "bg-[#4eac6f]"
+            disabled={record.isPaymentDone === "Completed" || record.status !== RequestStutus.Accepted}
+            className={`text-xs sm:text-sm md:text-base px-3 py-2 rounded-md transition-all duration-300 ${
+              record.isPaymentDone === "Completed" || record.status !== RequestStutus.Accepted
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                : "bg-green-500 hover:bg-green-600 text-white"
             }`}
-            onClick={() =>
-              handlePayment(Number(record.requestId), record.sellerId)
-            }
+            onClick={() => record.sellerId && handlePayment(Number(record.requestId), record.sellerId)}
           >
-            Make payment
+            {record.isPaymentDone === "Completed" ? "Payment Completed" : "Make Payment"}
           </button>
         </div>
       ),
@@ -83,10 +95,32 @@ const Request_page = () => {
 
   return (
     <BuyerLayout>
-      {paymentMessage}
-      {isOnPayment ? <Loader /> : <div></div>}
-      <div className="w-full px-1 py-1 m-2  h-auto">
-        <Table dataSource={sentRequests} columns={columns} />
+      <div className="w-full min-h-screen px-2 sm:px-4 md:px-8 py-4 bg-gray-50">
+        {/* Payment Message */}
+        {paymentMessage && (
+          <div className="w-full text-center mb-4">
+            <span className="text-green-600 font-semibold text-sm sm:text-base">
+              {paymentMessage}
+            </span>
+          </div>
+        )}
+
+        {/* Loader */}
+        {isOnPayment ? (
+          <div className="flex justify-center items-center py-20">
+            <Loader />
+          </div>
+        ) : (
+          <div className="overflow-x-auto bg-white p-4 rounded-lg ">
+            <Table
+              dataSource={sentRequests}
+              columns={columns}
+              pagination={{ pageSize: 5 }}
+              scroll={{ x: true }}
+              className="min-w-full"
+            />
+          </div>
+        )}
       </div>
     </BuyerLayout>
   );

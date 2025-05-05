@@ -1,25 +1,16 @@
-import { ethers } from "hardhat";
+const { ethers } = require("hardhat");
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
-
-  const lockedAmount = ethers.utils.parseEther("0.01");
-
-  const LandRegistery = await ethers.getContractFactory("LandRegistery");
-
-  const landRegistery = await LandRegistery.deploy();
-
-  
-  await landRegistery.deployed();
-
-  console.log(`landregistery  delopyed to ${landRegistery.address}`);
+    const LandRegistery = await ethers.getContractFactory("LandRegistery");
+    const landRegistery = await LandRegistery.deploy();
+    
+    await landRegistery.deployed();
+    console.log(`LandRegistery deployed to: ${landRegistery.address}`);
 }
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });

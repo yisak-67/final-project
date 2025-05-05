@@ -24,7 +24,6 @@ const LandDetail = () => {
 
   useEffect(() => {
     const currentLand = sellerLands?.find((land) => land.id == id);
-    console.log(currentLand);
     if (currentLand) setLand(currentLand);
   }, []);
 
@@ -41,19 +40,13 @@ const LandDetail = () => {
 
   const handleUpdateSubmit = async (e: any) => {
     e.preventDefault();
-
     setIsUpdating(true);
-
     const result = await updateLandInfoWithContract({
       id: land?.id,
       price: updateForm.price,
       detail: updateForm.detail,
     });
-
-    console.log("update result");
-    console.log(result);
     router.push("/p_seller/ManageLand");
-
     setIsUpdating(false);
   };
 
@@ -65,126 +58,123 @@ const LandDetail = () => {
 
   return (
     <SellerLayout>
-      <div className="ml-[270px]">
-        <div className="flex flex-col justify-center items-center w-full ">
-          <div className=" flex justify-center items-center bg-[#4eac6f] w-[380px] rounded-[10px] p-[3px]">
-            <p className="font-serf font-bold sm:text-[18px] text-[12x] text-white leading-[30px] ">
+      {/* Responsive Container */}
+      <div className="md:ml-[270px] px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col justify-center items-center w-full">
+          {/* Responsive Heading */}
+          <div className="flex justify-center items-center bg-[#4eac6f] w-full sm:w-[380px] rounded-[10px] p-2 mb-4 sm:mb-6">
+            <p className="font-serif font-bold text-sm sm:text-lg text-white">
               Land Information with interactive map
             </p>
           </div>
 
           {isUpdating && <Loader />}
 
-          {/* // detail */}
-          <div className={`flex ${isDetailOn ? "flex-row" : ""} w-full`}>
-            <div className="bg-white-500 rounded-md shadow-lg  sm:p-8 md:p-10 lg:p-12 xl:p-14 w-full mx-5 mt-5">
-              <div className="flex justify-end items-center">
+          {/* Responsive Flex Layout */}
+          <div className={`flex ${isDetailOn ? "flex-col lg:flex-row" : "flex-col"} w-full gap-4`}>
+            {/* Left Section (Land Details) */}
+            <div className="bg-white rounded-md shadow-lg p-4 sm:p-6 md:p-8 lg:p-10 w-full">
+              <div className="flex justify-end items-center text-sm sm:text-base">
                 Owner :-{" "}
-                <span className="font-sans  text-green-500 mx-2">
+                <span className="font-sans text-green-500 mx-2">
                   {land?.postedBy}
                 </span>
               </div>
-              <div
-                className={`flex justify-around ${
-                  isDetailOn ? "flex-col" : "flex-row"
-                } items-center`}
-              >
-                <div className="mt-5 flex justify-center gap-2 items-center flex-col h-[400px] w-[450px] ">
-                  <span className="font-serf font-bold sm:text-[18px] text-[12x] text-black leading-[30px]">
+
+              {/* Responsive Image & Map Section */}
+              <div className={`flex ${isDetailOn ? "flex-col" : "flex-col lg:flex-row"} items-center justify-around gap-4 mt-4`}>
+                {/* Karta Image */}
+                <div className="flex flex-col items-center gap-2 w-full sm:w-[450px]">
+                  <span className="font-serif font-bold text-base sm:text-lg">
                     Karta
                   </span>
                   <img
-                    src={`${
-                      land?.documentHash ?? "/images/placeholderImage.jpg"
-                    }`}
-                    alt={""}
-                    className="rounded-[#35px]"
+                    src={land?.documentHash || "/images/placeholderImage.jpg"}
+                    alt="Land Document"
+                    className="rounded-lg w-full h-auto max-h-[300px] object-cover"
                   />
-                  <span className="ml-2 text-blue-600 font-bold flex flex-row">
-                    <img src="/Icons/Verify.svg" width={20} height={20} />
+                  <span className="flex items-center text-blue-600 font-bold">
+                    <img src="/Icons/Verify.svg" alt="Verification Icon" width={20} height={20} className="mr-1" />
                     {land?.isVerified ? "Verified" : "Unverified"}
                   </span>
                 </div>
-                <div className="mt-10 flex justify-center items-center flex-col gap-2 ">
-                  <span className="font-serf font-bold sm:text-[18px] text-[12x] text-black leading-[30px]">
+
+                {/* Interactive Map */}
+                <div className="flex flex-col items-center gap-2 w-full sm:w-[450px]">
+                  <span className="font-serif font-bold text-base sm:text-lg">
                     Interactive Map
                   </span>
-                  <DisplayLand
-                    latandlongs={`${land?.locationAddress}`}
-                    index={10000}
-                  />
-                  <span className="ml-2 text-blue-600 font-bold flex flex-row">
-                    <img src="/Icons/Verify.svg" width={20} height={20} />
+                  <div className="w-full h-[300px]">
+                    <DisplayLand
+                      latandlongs={`${land?.locationAddress}`}
+                      index={10000}
+                    />
+                  </div>
+                  <span className="flex items-center text-blue-600 font-bold">
+                    <img src="/Icons/Verify.svg" alt="Verification Icon" width={20} height={20} className="mr-1" />
                     {land?.isVerified ? "Verified" : "Unverified"}
                   </span>
                 </div>
               </div>
 
-              <div className="bg-white rounded-[10px] p-5 mt-10 flex justify-start items-start flex-col flex-wrap">
-                <p className="text-gray-600 text-lg mb-5">
-                  <span className="text-black-500 font-serif font-bold mr-2">
+              {/* Land Info Section */}
+              <div className="bg-white rounded-[10px] p-4 sm:p-5 mt-6">
+                <p className="text-gray-600 text-sm sm:text-base mb-3 sm:mb-4">
+                  <span className="text-black font-serif font-bold mr-2">
                     Address :
-                  </span>{" "}
+                  </span>
                   {land?.landAddress}
                 </p>
-                <p className="text-gray-600 text-lg mb-5">
-                  {" "}
-                  <span className="text-black-500 font-serif font-bold mr-2">
+                <p className="text-gray-600 text-sm sm:text-base mb-3 sm:mb-4">
+                  <span className="text-black font-serif font-bold mr-2">
                     Description :
                   </span>
                   {land?.detail}
                 </p>
-                <p className="text-green-500 text-xl font-bold">
-                  {" "}
-                  <span className="text-black-500 font-serif font-bold mr-2">
-                    Price M :{" "}
+                <p className="text-green-500 text-base sm:text-lg font-bold">
+                  <span className="text-black font-serif font-bold mr-2">
+                    Price :
                   </span>
                   {land?.price} <span className="text-red-500">matic</span>
                 </p>
               </div>
 
-              <div className="ml-5 mt-10">
+              {/* Update Button */}
+              <div className="mt-6 sm:mt-8">
                 <CustomButton
                   title={`Update ${isDetailOn ? " > Open" : "Closed"}`}
                   buttonType={undefined}
-                  styles="border border-green-500 text-green-500 rounded-md py-2 px-4 transition duration-300 hover:bg-green-500 hover:text-white"
+                  styles="border border-green-500 text-green-500 rounded-md py-2 px-4 transition duration-300 hover:bg-green-500 hover:text-white text-sm sm:text-base"
                   handleClick={handDetailChange}
                 />
               </div>
-              <p className="flex justify-end items-center mt-10">
+
+              {/* Posted Date */}
+              <div className="flex justify-end items-center mt-6 text-sm sm:text-base">
                 Posted on :{" "}
-                <span className=" font-sans mr-5 text-blue-500">
+                <span className="font-sans text-blue-500 ml-2">
                   {land?.postedDate?.toString()}
-                </span>{" "}
-              </p>
+                </span>
+              </div>
             </div>
 
-            {/* //update */}
-            <div
-              className={`${
-                isDetailOn ? "flex" : "hidden"
-              } w-[800px] h-[700px]`}
-            >
-              <div className="p-10 mb-4 mt-5 border border-solid border-gray-100 shadow ring-1 ring-gray-50">
-                <div className="flex flex-1 items-start justify-start">
-                  <h1 className="font-epilogue sm:text-[20px] text-[25px] leading-[60px] text-black">
+            {/* Update Form (Hidden/Shown) */}
+            {isDetailOn && (
+              <div className="w-full lg:w-[800px] bg-white p-4 sm:p-6 md:p-8 lg:p-10 rounded-md shadow-lg">
+                <div className="flex items-start justify-start mb-4 sm:mb-6">
+                  <h1 className="font-epilogue text-lg sm:text-xl lg:text-2xl text-black">
                     Update Land
                   </h1>
                 </div>
 
-                <form
-                  onSubmit={handleUpdateSubmit}
-                  className=" mt-6 flex flex-col gap-[30px] mr-10"
-                >
+                <form onSubmit={handleUpdateSubmit} className="flex flex-col gap-4 sm:gap-6">
                   <CustomFormField
                     LableName="Price *"
                     placeholder="1000000"
                     inputType="text"
                     isTextArea={false}
                     value={updateForm.price as string}
-                    handleChange={(e: { target: { value: any } }) =>
-                      handleFormFieldChange("price", e)
-                    }
+                    handleChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFormFieldChange("price", e)}
                   />
                   <CustomFormField
                     LableName="Detail *"
@@ -192,19 +182,17 @@ const LandDetail = () => {
                     inputType="text"
                     isTextArea={true}
                     value={updateForm.detail as string}
-                    handleChange={(e: { target: { value: any } }) =>
-                      handleFormFieldChange("detail", e)
-                    }
+                    handleChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFormFieldChange("detail", e)}
                   />
 
                   <CustomButton
                     buttonType="submit"
                     title="Update Land"
-                    styles="bg-[#4eac6f] text-white"
+                    styles="bg-[#4eac6f] text-white py-2 px-4 rounded-md hover:bg-[#3d8a5a] transition"
                   />
                 </form>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

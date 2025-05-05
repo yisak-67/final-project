@@ -81,7 +81,7 @@ const Register: NextPage = () => {
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <CustomFormField
                 LableName="Full Name"
-                placeholder="John Doe"
+                placeholder="Enter your full name"
                 inputType="text"
                 isTextArea={false}
                 value={userForm.fullName as string}
@@ -91,7 +91,7 @@ const Register: NextPage = () => {
 
               <CustomFormField
                 LableName="Address"
-                placeholder="123 Main St, City"
+                placeholder="Enter your address"
                 inputType="text"
                 isTextArea={false}
                 value={userForm.addressLocation}
@@ -102,7 +102,7 @@ const Register: NextPage = () => {
 
             <CustomFormField
               LableName="Phone Number"
-              placeholder="+251900000000"
+              placeholder="Enter your phone number"
               inputType="tel"
               isTextArea={false}
               value={userForm.phoneNumber}
@@ -111,16 +111,15 @@ const Register: NextPage = () => {
             />
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <CustomFormField
-                LableName="Email"
-                placeholder="your@email.com"
-                inputType="email"
-                isTextArea={false}
-                value={userForm.email}
-                handleChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFormFieldChange("email", e.target.value)}
-             
-                required
-              />
+            <CustomFormField
+              LableName="Email"
+              placeholder="Enter your email address"
+              inputType="email"
+              isTextArea={false}
+              value={userForm.email}
+              handleChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFormFieldChange("email", e.target.value)}
+              required
+            />
 
               <div>
                 <label
@@ -246,6 +245,7 @@ const Register: NextPage = () => {
               <CustomButton
                 buttonType="submit"
                 title="Register"
+                aria-label="Register"
                 styles="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               />
             </div>

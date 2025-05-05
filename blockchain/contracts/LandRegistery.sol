@@ -34,11 +34,13 @@ contract LandRegistery {
     event ErrorMessage(string message);
     event Success(string message);
     event LogoutEvent(bool status, string message);
+    event LandVerified(uint landId, address verifiedBy, uint256 timestamp);
 
     error LandNotFound();
     error UserNotFound();
     error RequestNotFound();
     error TransferNotFound();
+
 
     // * receive function
     receive() external payable {}
@@ -130,7 +132,14 @@ contract LandRegistery {
     mapping(address => uint[]) public recievedRequests;
     mapping(address => uint[]) public sentRequests;
 
-    // auth
+    
+    
+    modifier onlyAdmin() {
+    require(msg.sender == adminAddress, "Only admin can perform this action");
+    _;
+}
+
+// auth
 
     function checkifUserExist(address _userAddress) public view returns (bool) {
         if (allUserAddresss[_userAddress]) {
@@ -210,11 +219,13 @@ contract LandRegistery {
         string memory _email,
         string memory _password,
         string memory _addressLocation,
+        string memory _fullName,
         string memory _phoneNumber
     ) public returns (bool) {
         require(allUsers[msg.sender].id == msg.sender);
 
         allUsers[msg.sender].profileHash = _profileHash;
+        allUsers[msg.sender].fullName = _fullName;
         allUsers[msg.sender].email = _email;
         allUsers[msg.sender].password = _password;
         allUsers[msg.sender].addressLocation = _addressLocation;
@@ -278,6 +289,7 @@ contract LandRegistery {
             _postedDate,
             false,
             _area
+            
         );
         LandHistory memory history = LandHistory(msg.sender, block.timestamp);
         landHistories[landsTotal].push(history);
@@ -294,15 +306,14 @@ contract LandRegistery {
         }
     }
 
-    function verifyLand(uint _id) public returns (bool) {
-        bool checkLand = checkIfLandExist(_id);
-        if (checkLand) {
-            allLands[_id].isVerified = true;
-            return true;
-        } else {
-            return false;
-        }
-    }
+function verifyLand(uint _id) public onlyAdmin returns (bool) {
+    require(checkIfLandExist(_id), "Land does not exist");
+    require(!allLands[_id].isVerified, "Land already verified");
+    
+    allLands[_id].isVerified = true;
+    emit LandVerified(_id, msg.sender, block.timestamp);
+    return true;
+}
 
     function updateLandInfo(
         uint id,
@@ -413,46 +424,18 @@ contract LandRegistery {
     ) public payable {
         _recieverAddress.transfer(msg.value);
     }
+    // function getBalance() public view returns (uint) {
+    //     return address(this).balance;
 
-    function getRecentTransfer(
-        uint _requestId
-    ) public view returns (Transfer memory) {
-        if (allTransfersIds[_requestId]) {
-            return allTransfers[_requestId];
-        }
-        revert TransferNotFound();
-    }
-    function getAllLands() public view returns (Land[] memory) {
-        Land[] memory lands = new Land[](landsTotal);
-        uint count = 0;
-        for (uint i = 0; i < landsTotal; i++) {
-            Land memory land = allLands[i];
-            lands[count] = land;
-            count++;
-        }
-        return lands;
-    }
-    function getAllUsers() public view returns (User[] memory) {
-        User[] memory users = new User[](usersTotal);
-        uint count = 0;
-        for (uint i = 0; i < usersTotal; i++) {
-            User memory user = allUsers[userAddressList[i]];
-            users[count] = user;
-            count++;
-        }
-        return users;
-    }
-    function getAllRequests() public view returns (Request[] memory) {
-        Request[] memory requests = new Request[](requestCount);
-        uint count = 0;
-        for (uint i = 0; i < requestCount; i++) {
-            Request memory request = allRequests[i];
-            requests[count] = request;
-            count++;
-        }
-        return requests;
-    }
-    function getAllTransfers() public view returns (Transfer[] memory) {
+    // }
+    // function withdraw(uint _amount) public {
+    //     require(msg.sender == adminAddress, "Only admin can perform this action");
+    //     require(_amount <= address(this).balance, "Insufficient balance");
+    //     adminAddress.transfer(_amount);
+    // }
+    //add more recent transaction
+    //add more recent transaction
+    function getRecentTransactions() public view returns (Transfer[] memory) {
         Transfer[] memory transfers = new Transfer[](transferTotal);
         uint count = 0;
         for (uint i = 0; i < transferTotal; i++) {
@@ -462,31 +445,15 @@ contract LandRegistery {
         }
         return transfers;
     }
-    function getAllUserAddress() public view returns (address[] memory) {
-        return userAddressList;
-    }
-    function getAllUserAddressLength() public view returns (uint) {
-        return userAddressList.length;
-    }
-    function getAllLandsLength() public view returns (uint) {
-        return landsTotal;
-    }
-    function getAllUsersLength() public view returns (uint) {
-        return usersTotal;
-    }
-    function getAllRequestsLength() public view returns (uint) {
-        return requestCount;
-    }
-    function getAllTransfersLength() public view returns (uint) {
-        return transferTotal;
-    }
-    function getAllLandIds() public view returns (uint[] memory) {
-        uint[] memory landIds = new uint[](landsTotal);
+
+    function getRecentRequests() public view returns (Request[] memory) {
+        Request[] memory requests = new Request[](requestCount);
         uint count = 0;
-        for (uint i = 0; i < landsTotal; i++) {
-            landIds[count] = i;
+        for (uint i = 0; i < requestCount; i++) {
+            Request memory request = allRequests[i];
+            requests[count] = request;
             count++;
         }
-        return landIds;
+        return requests;
     }
 }

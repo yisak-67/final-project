@@ -35,7 +35,7 @@ const Login: NextPage = () => {
     isAuthenticated &&
       user?.Role === UserType.Seller &&
       router.push("/p_seller/seller_page");
-  }, [isAuthenticated]);
+  }, [isAuthenticated, router, user?.Role]);
 
   const [loginForm, setLoginForm] = useState<LoginForm>({
     email: "",
@@ -47,8 +47,8 @@ const Login: NextPage = () => {
     setIsLoading(true);
     const response: ContractWriteResponse =
       await signInWithEmailandPasswordWithContract(loginForm);
-      console.log("working aaa");
-      console.log(response);
+    console.log("working aaa");
+    console.log(response);
 
     if (response.status) {
       disptach(authSucess(response.data));
@@ -77,20 +77,20 @@ const Login: NextPage = () => {
     setShowPassword(!showPassword);
   };
   return (
-    <section>
+    <section className="bg-gray-50 py-12 sm:py-20">
       <div className="relative w-full h-full flex justify-center items-center">
         {isLoading && <Loader />}
 
-        <div className="p-10 mb-4  border border-solid border-gray-100 shadow ring-1 ring-gray-50 w-[600px] mt-10">
-          <div className="flex flex-1 items-start justify-start">
-            <h1 className="font-epilogue sm:text-[20px] text-[25px] leading-[60px] text-black">
+        <div className="relative p-6 sm:p-10 mb-4 bg-white border border-solid border-gray-100  rounded-lg w-full max-w-md sm:max-w-lg mt-10">
+          <div className="flex flex-1 items-start justify-start mb-4">
+            <h1 className="font-epilogue sm:text-2xl text-xl font-semibold leading-tight text-gray-900">
               Welcome back!
             </h1>
           </div>
-          <div className="flex flex-col gap-[#20px] justify-center items-center">
+          <div className="flex flex-col gap-6 justify-center items-center">
             <form
               onSubmit={handleSubmit}
-              className="w-full mt-[10px] flex flex-col gap-[30px]"
+              className="w-full mt-2 flex flex-col gap-4"
             >
               <CustomFormField
                 LableName="Email *"
@@ -104,7 +104,7 @@ const Login: NextPage = () => {
               />
 
               <label className="flex-1 w-full flex flex-col">
-                <span className="font-epilogue font-medium text-[14px] leading-[22px] text-[#02131E] mb-[10px]">
+                <span className="font-epilogue font-medium text-sm leading-5 text-gray-700 mb-2">
                   Password
                 </span>
 
@@ -116,13 +116,12 @@ const Login: NextPage = () => {
                     }
                     type={showPassword ? "text" : "password"}
                     placeholder="************"
-                    className="w-full
-       py-[15px] sm:px-[25px] px-[15px] outline-none border-[1px] border-[#cacad5] bg-transparent font-epilogue text-[#02131E]
-          text-[14px]  rounded-[10px]  placeholder:text-[#4b5264] sm:min-w-[300px] focus:ring-blue-500 focus:border-blue-500 focus:ring-1"
+                    className="w-full py-3 sm:px-4 px-3 outline-none border border-gray-300 bg-transparent font-epilogue text-gray-900
+          text-sm rounded-md placeholder:text-gray-500 sm:min-w-[300px] focus:ring-blue-500 focus:border-blue-500 focus:ring-1"
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 flex items-center justify-center px-4 text-gray-600"
+                    className="absolute inset-y-0 right-0 flex items-center justify-center px-3 text-gray-600"
                     onClick={togglePasswordVisibility}
                   >
                     {showPassword ? (
@@ -167,28 +166,37 @@ const Login: NextPage = () => {
               <CustomButton
                 buttonType="submit"
                 title="Login"
-                styles="bg-[#4eac6f] text-white"
+                styles="bg-green-500 text-white py-3 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
               />
             </form>
-            {errorMessage && <div className="text-red-200">{errorMessage}</div>}
-            <div className="flex flex-col flex-wrap mt-5 gap-2">
+            {errorMessage && (
+              <div className="text-red-500 text-sm mt-2">{errorMessage}</div>
+            )}
+            <div className="flex flex-col flex-wrap mt-5 gap-3 sm:gap-4">
               <div className="inline-flex items-center justify-center w-full">
-                <hr className="w-64 h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+                <hr className="w-64 h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
                 <span className="absolute px-3 font-medium text-gray-900 -translate-x-1/2 bg-white left-1/2 dark:text-white dark:bg-gray-900">
                   or
                 </span>
               </div>
               <button
-                className="bg-[#f2f2ea] p-1 "
+                type="button"
+                title="Login with MetaMask"
+                className="bg-gray-100 p-2 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-offset-2"
                 onClick={() => handleWalletClick()}
               >
-                <img height={50} width={150} src="/images/metamask_icon.png" />
+                <img
+                  height={40}
+                  width={120}
+                  src="/images/metamask_icon.png"
+                  alt="MetaMask Icon"
+                />
               </button>
             </div>
 
-            <div className="flex items-center justify-center mt-10 text-black flex-row gap-2 ">
-              <p className="text-[#02131E]">Don't Have An Account?</p>
-              <Link href="/p_auth/register" className="text-[#4eac6f]">
+            <div className="flex items-center justify-center mt-6 text-gray-900 flex-row gap-2 ">
+              <p className="text-sm">Don't Have An Account?</p>
+              <Link href="/p_auth/register" className="text-green-500 hover:underline">
                 Sign Up
               </Link>
             </div>

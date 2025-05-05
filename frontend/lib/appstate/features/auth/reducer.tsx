@@ -9,6 +9,7 @@ import {
   clearAuthError,
   logOut,
   registerCompleted,
+  setUser,
 } from "./actions";
 
 export type AuthState = {
@@ -54,6 +55,15 @@ export const AuthReducer = createReducer(initialState, (builder) => {
       isLoading: false,
       isAuthenticated: false,
       user: null,
+    };
+  });
+  builder.addCase(setUser, (state, { payload }) => {
+    return {
+      ...state,
+      user: {
+        ...state.user,
+        ...payload
+      }
     };
   });
 });

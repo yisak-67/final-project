@@ -32,3 +32,4 @@ export const logOut = createAction(ActionType.LOGOUT, () => {
     payload: null,
   };
 });
+export const setUser = createAction<User>("auth/setUser");

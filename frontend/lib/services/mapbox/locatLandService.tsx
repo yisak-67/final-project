@@ -17,7 +17,7 @@ const locatLandwithMapBox = (): LocateMapReturnType => {
   map = new mapboxgl.Map({
     container: "Map1",
     style: "mapbox://styles/mapbox/satellite-streets-v12", // set to satellite
-    center: [38.763611, 9.005401], // set to addis ababa
+    center: [37.5517, 6.0340], // set to addis ababa
     zoom: 13,
   });
 

@@ -29,7 +29,6 @@
 //   },
 // };
 
-
 // export default config;
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
@@ -44,7 +43,6 @@ const config: HardhatUserConfig = {
       },
     },
   },
-        
   paths: {
     artifacts: "../frontend/artifacts",
   },

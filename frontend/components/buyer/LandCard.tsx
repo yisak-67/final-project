@@ -89,7 +89,7 @@ const LandCard: React.FC<{ landItem: LandModel; index: number }> = ({
             />
             <span
               className={
-                landItem.isVerified ? "text-green-600" : "text-blue-600"
+                landItem.isVerified ? "text-green-600 text-bold" : "text-blue-600"
               }
             >
               {landItem.isVerified ? "Verified" : "Unverified"}

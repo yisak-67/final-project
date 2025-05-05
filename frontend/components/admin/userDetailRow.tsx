@@ -8,6 +8,7 @@ import { Loader } from "@/components/common";
 import { verifyUser } from "@/lib/services/blockchainService/verficationcontractServices";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FaQuestionCircle } from "react-icons/fa";
 
 interface Props {
   user: User;
@@ -47,11 +48,33 @@ const UserDetailrow: React.FC<Props> = ({ user }) => {
           <div className="text-sm text-gray-500">{user.Role}</div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
-          <span className=" text-blue-600 font-semibold flex flex-row">
-            <img src="/Icons/Verify.svg" width={20} height={20} />
-            <span className="ml-2 ">Unverfied</span>
-          </span>
-        </td>
+  <div className="flex items-center">
+    {user.isVerified ? (
+      <>
+        <img 
+          src="/Icons/Verify.svg" 
+          width={20} 
+          height={20} 
+          alt="Verified" 
+          className="text-green-500"
+        />
+        <span className="ml-2 text-sm font-medium text-green-600">
+          Verified
+        </span>
+      </>
+    ) : (
+      <>
+        <FaQuestionCircle 
+          size={20} 
+          className="text-blue-500" 
+        />
+        <span className="ml-2 text-sm font-medium text-blue-600">
+          Unverified
+        </span>
+      </>
+    )}
+  </div>
+</td>
         <td className="px-6 py-4 whitespace-nowrap">
           <CustomButton
             buttonType={undefined}
