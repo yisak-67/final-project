@@ -116,6 +116,44 @@ const initialLoadUser = async (): Promise<User | null> => {
     return null;
   }
 };
+const updateProfileWithContract = async (
+  profileData: {
+    profileHash: string;
+    email: string;
+    password: string;
+    addressLocation: string;
+    phoneNumber: string;
+    fullName: string;
+  }
+): Promise<ContractWriteResponse> => {
+  try {
+    const alchemyContract = await writeAlchemyProvider();
+    if (!alchemyContract) {
+      throw new Error("Contract not initialized");
+    }
+
+    const transaction = await alchemyContract.UpdateProfile(
+      profileData.profileHash,
+      profileData.fullName,
+      profileData.email,
+      profileData.password,
+      profileData.addressLocation,
+      profileData.phoneNumber
+    );
+
+    await transaction.wait();
+    console.log("Profile updated successfully", transaction, profileData);
+    return { status: true };
+  } catch (error: any) {
+    console.error("Profile update error:", error);
+    return {
+      status: false,
+      data: error.message || "Failed to update profile"
+    };
+  }
+};
+
+
 
 const setLocalStorage = (userAddress: string) => {
   localStorage.setItem("_user_address", userAddress);
@@ -130,14 +168,14 @@ const getUserAddress_s = async (): Promise<User[] | null> => {
     const contract = await getmainContractProvider();
     const alchemyContract = await getAlchemyProvider();
     const response = await alchemyContract?.getUsers();
-    console.log("from alechemy contract",{ users: response });
+    // console.log("from alechemy contract",{ users: response });
     let users: User[] = [];
     for (let address of response) {
       let user = { ...address };
       const parsedUser = parseUser(user);
       if (parsedUser.Role != "Admin") users.push(parsedUser);
     }
-    console.log({ users });
+    // console.log({ users });
     return users;
   } catch (error) {
     console.log(`error message : ${error}`);
@@ -145,37 +183,23 @@ const getUserAddress_s = async (): Promise<User[] | null> => {
   }
 };
 
-const updateProfileWithContract = async (profileData: any): Promise<ContractWriteResponse> => {
-  try {
-    const alchemyContract = await getAlchemyProvider();
-    if (!alchemyContract) {
-      throw new Error("Alchemy contract is not available");
-    }
-    const transaction = await alchemyContract.updateProfile(profileData);
-    await transaction.wait();
-    return { status: true };
-  } catch (error) {
-    return {
-      status: false,
-      data: `error message: ${error}`,
-    };
-  }
-};
-const resetPasswordWithContract = async () => {
-  try {
-    const alchemyContract = await getAlchemyProvider();
-    if (!alchemyContract) {
-      throw new Error("Alchemy contract is not available");
-    }
-    const transaction = await alchemyContract.resetPassword();
-    return { status: true };
-  } catch (error) {
-    return {
-      status: false,
-      data: `error message: ${error}`,
-    };
-  }
-};
+
+
+// const resetPasswordWithContract = async () => {
+//   try {
+//     const alchemyContract = await getAlchemyProvider();
+//     if (!alchemyContract) {
+//       throw new Error("Alchemy contract is not available");
+//     }
+//     const transaction = await alchemyContract.resetPassword();
+//     return { status: true };
+//   } catch (error) {
+//     return {
+//       status: false,
+//       data: `error message: ${error}`,
+//     };
+//   }
+// };
 
 export {
   registerUserWithContract,
@@ -185,6 +209,7 @@ export {
   setLocalStorage,
   clearLocalStorage,
   getUserAddress_s,
+  
   updateProfileWithContract,
-  resetPasswordWithContract,
+  // resetPasswordWithContract,
 };

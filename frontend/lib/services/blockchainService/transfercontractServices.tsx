@@ -77,4 +77,4 @@ const getRequestWithContract = async (id: number) => {
   }
 };
 
-export { getAllRequestsListWithContract, transerLandTitle };
+export { getAllRequestsListWithContract, transerLandTitle, getRequestWithContract, getTotalRequesCountWithContract };
