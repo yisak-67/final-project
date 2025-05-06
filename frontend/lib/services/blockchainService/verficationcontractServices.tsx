@@ -65,6 +65,20 @@ const verifyLand = async (id: number): Promise<number> => {
     return 1;
   }
 };
+const addAdmin = async (address: string): Promise<number> => {
+  try {
+    const alchemyContract = await writeAlchemyProvider();
+    const response = await alchemyContract?.addAdmin(address);
+    if (response) {
+      return 0;
+    } else {
+      return 1;
+    }
+  } catch (error: any) {
+    console.log("Error while adding admin", error.toString());
+    return 1;
+  }
+}
 const getUsers = () => {};
 const getLands = () => {};
 const getVerifiedUsers = () => {};
