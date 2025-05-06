@@ -68,7 +68,7 @@ const Buyer_page = () => {
             <p className="font-mono font-semibold sm:text-[18px] text-[10x] text-[#4eac6f] leading-[24px] ml-4 mt-5 py-2">
               Available Lands
             </p>
-            <div className="h-auto border-2 rounded-[15px] mx-4 mt-2 p-4">
+            <div className="h-auto  rounded-[15px] mx-4 mt-2 p-4">
               {avaliableLands ? (
                 <>
                   {avaliableLands.length > 0 ? (
