@@ -47,10 +47,10 @@ const CreateLand: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-
+  
     try {
       const userAddress = await getCurrentAccount();
-
+  
       const landData: LandModel = {
         ...landForm,
         documentHash: filePath || "",
@@ -58,16 +58,35 @@ const CreateLand: React.FC = () => {
         postedBy: userAddress || "",
         area: landArea ? String(landArea) : "",
       };
-
+  
       const result = await createLandWithContract({ ...landData, isVerified: false });
+  
+      if (result.status === false) {
+        alert("Invalid input or you are not authorized to create land. Please verify your account.");
+        router.push("/p_seller/CreateLandPage");
+        return;
+      }
+  
+      alert("Land created successfully!");
       console.log("Created Land:", result);
       router.push("/p_seller/ManageLand");
-    } catch (error) {
+  
+    } catch (error: any) {
       console.error("Error creating land:", error);
+  
+      // Handle MetaMask RPC error with a user-friendly message
+      if (error?.message?.includes("You are not verified to create land")) {
+        alert("You are not verified to create land. Please complete your verification process before proceeding.");
+      } else {
+        alert("An error occurred while creating the land. Please check your inputs or try again later.");
+      }
+  
+      router.push("/p_seller/CreateLandPage");
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="pt-16 md:pt-0 flex justify-center items-start px-2 sm:px-4 md:px-6 min-h-screen bg-gray-50">
@@ -88,7 +107,7 @@ const CreateLand: React.FC = () => {
                 inputType="text"
                 isTextArea={false}
                 value={landForm.title || ""}
-                handleChange={(e) => handleFormFieldChange("title", e.target.value)}
+                handleChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFormFieldChange("title", e.target.value)}
               />
             </div>
             <div className="flex-1 ">
@@ -97,8 +116,8 @@ const CreateLand: React.FC = () => {
                 placeholder="e.g. 1,000,000"
                 inputType="text"
                 isTextArea={false}
-                value={landForm.price}
-                handleChange={(e) => handleFormFieldChange("price", e.target.value)}
+                value={landForm.price || ""}
+                handleChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFormFieldChange("price", e.target.value)}
               />
             </div>
           </div>
@@ -109,8 +128,8 @@ const CreateLand: React.FC = () => {
               placeholder="Detailed description of the land including features, nearby amenities, etc."
               inputType="text"
               isTextArea
-              value={landForm.detail}
-              handleChange={(e) => handleFormFieldChange("detail", e.target.value)}
+              value={landForm.detail || ""}
+              handleChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleFormFieldChange("detail", e.target.value)}
             />
           </div>
 
@@ -120,8 +139,8 @@ const CreateLand: React.FC = () => {
               placeholder="e.g. Bole, Near Friendship Center"
               inputType="text"
               isTextArea={false}
-              value={landForm.landAddress}
-              handleChange={(e) => handleFormFieldChange("landAddress", e.target.value)}
+              value={landForm.landAddress || ""}
+              handleChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFormFieldChange("landAddress", e.target.value)}
             />
           </div>
 
