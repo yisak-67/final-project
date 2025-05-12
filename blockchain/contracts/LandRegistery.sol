@@ -24,7 +24,7 @@ contract LandRegistery {
             "Admin",
             true,
             false,
-            block.timestamp
+            block.timestamp // Removed trailing comma
         );
         allUserAddresss[msg.sender] = true;
         userAddressList.push(msg.sender);
@@ -51,7 +51,8 @@ contract LandRegistery {
     enum UserType {
         Admin,
         Seller,
-        Buyer
+        Buyer,
+        LandManagement
     }
 
     enum RequestStatus {
@@ -159,6 +160,12 @@ contract LandRegistery {
         string memory _role
     ) public returns (bool) {
         usersTotal++;
+        require(
+            allUsers[msg.sender].id != msg.sender,
+            "User already exists"
+        );
+       
+
         allUsers[msg.sender] = User(
             msg.sender,
             _fullName,
@@ -180,7 +187,9 @@ contract LandRegistery {
     }
 
     function login(string memory _email, string memory _password) public {
+
         require(allUsers[msg.sender].id == msg.sender);
+        require(allUsers[msg.sender].isBanned == false);
 
         if (
             keccak256(abi.encodePacked(bytes(allUsers[msg.sender].email))) ==
@@ -234,7 +243,10 @@ contract LandRegistery {
         return true;
     }
 
-    function verifyUser(address _userAddress) public returns (bool) {
+    function verifyUser(address _userAddress) public onlyAdmin returns (bool) {
+       
+    
+       
         bool checkUser = checkifUserExist(_userAddress);
         if (checkUser) {
             allUsers[_userAddress].isVerified = true;
@@ -244,7 +256,7 @@ contract LandRegistery {
         }
     }
 
-    function grantRevoke(address _userAddress) public returns (bool) {
+    function grantRevoke(address _userAddress) public  onlyAdmin returns (bool) {
         bool checkUser = checkifUserExist(_userAddress);
         if (checkUser) {
             allUsers[_userAddress].isBanned = !allUsers[_userAddress].isBanned;
@@ -276,6 +288,15 @@ contract LandRegistery {
         uint256 _postedDate,
         uint _area
     ) public returns (bool) {
+        require(allUsers[msg.sender].id == msg.sender);
+        require(
+            allUsers[msg.sender].isVerified,
+            "You are not verified to create land"
+        );
+        require(
+            allUsers[msg.sender].isBanned == false,
+            "You are banned from creating land"
+        );
         landsTotal++;
         allLands[landsTotal] = Land(
             landsTotal,
@@ -320,7 +341,25 @@ function verifyLand(uint _id) public onlyAdmin returns (bool) {
         uint _price,
         string memory _detail
     ) public returns (bool) {
+           require(
+            allUsers[msg.sender].id == msg.sender,
+            "You are not logged in"
+        );
+        require(
+            allUsers[msg.sender].isVerified,
+            "You are not verified to create land"
+        );
+        require(
+            allUsers[msg.sender].isBanned == false,
+            "You are banned from creating land"
+        );
+        require(
+            allLands[id].postedBy == msg.sender,
+            "You are not the owner of this land"
+        );
+        
         bool island = checkIfLandExist(id);
+     
         if (island) {
             allLands[id].price = _price;
             allLands[id].detail = _detail;
@@ -337,6 +376,7 @@ function verifyLand(uint _id) public onlyAdmin returns (bool) {
 
     function getLand(uint _id) public view returns (Land memory) {
         bool isLand = checkIfLandExist(_id);
+        
         if (isLand) {
             return allLands[_id];
         }
@@ -346,6 +386,20 @@ function verifyLand(uint _id) public onlyAdmin returns (bool) {
     //request
 
     function sendRequest(uint _landId) public returns (bool) {
+        require(checkIfLandExist(_landId), "Land does not exist");
+        require(
+            allUsers[msg.sender].isVerified,
+            "You are not verified  to create land"
+
+        );
+        require(
+            allUsers[msg.sender].isBanned == false,
+            "You are banned from creating land"
+        );
+        require(
+            allLands[_landId].postedBy != msg.sender,
+            "You cannot request your own land"
+        );
         requestCount++;
         Land memory land = getLand(_landId);
         allRequests[requestCount] = Request(
@@ -370,14 +424,28 @@ function verifyLand(uint _id) public onlyAdmin returns (bool) {
     }
 
     function getRecievedRequests() public view returns (uint[] memory) {
+        require(
+            allUsers[msg.sender].id == msg.sender,
+            "You are not logged in"
+        );
+        require(
+            allUsers[msg.sender].isVerified,
+            "You are not verified to create land"
+        );
+
         return recievedRequests[msg.sender];
     }
 
     function getSentRequests() public view returns (uint[] memory) {
+
         return sentRequests[msg.sender];
     }
 
     function acceptRequest(uint _id) public {
+        require(
+            allUsers[msg.sender].id == msg.sender,
+            "You are not logged in"
+        );
         allRequests[_id].status = RequestStatus.accepted;
     }
 
@@ -388,9 +456,11 @@ function verifyLand(uint _id) public onlyAdmin returns (bool) {
     // transfer
 
     function transferlandtitle(uint _requestId) public {
+       
         transferTotal++;
         uint landId = allRequests[_requestId].landId;
         address buyerId = allRequests[_requestId].buyerId;
+        
         allTransfers[transferTotal] = Transfer(transferTotal, _requestId);
         allLands[landId].postedBy = payable(buyerId);
         LandHistory memory history = LandHistory(buyerId, block.timestamp);
@@ -412,9 +482,44 @@ function verifyLand(uint _id) public onlyAdmin returns (bool) {
         }
         return landHistory;
     }
+    function getAllLandsHistory() public view returns (LandHistory2[] memory) {
+        LandHistory2[] memory allLandHistory = new LandHistory2[](landsTotal);
+        for (uint i = 0; i < landsTotal; i++) {
+            LandHistory2[] memory history = getLandHistory(i);
+            for (uint j = 0; j < history.length; j++) {
+                allLandHistory[i] = history[j];
+            }
+        }
+        return allLandHistory;
+    }
 
     // payment
     function makePayment(uint _requestId) public payable {
+        require(
+            allUsers[msg.sender].id == msg.sender,
+            "You are not logged in"
+        );
+        require(
+            allUsers[msg.sender].isVerified,
+            "You are not verified to create land"
+        );
+        require(
+            allUsers[msg.sender].isBanned == false,
+            "You are banned from creating land"
+        );
+        require(
+            allRequests[_requestId].status == RequestStatus.accepted,
+            "Request is not accepted"
+        );
+        require(
+            allRequests[_requestId].isPaymentDone == false,
+            "Payment is already done"
+        );
+        require(
+            allLands[allRequests[_requestId].landId].postedBy != msg.sender,
+            "You cannot pay for your own land"
+        );
+
         allRequests[_requestId].isPaymentDone = true;
         allLands[allRequests[_requestId].landId].postedBy.transfer(msg.value);
     }
@@ -436,6 +541,7 @@ function verifyLand(uint _id) public onlyAdmin returns (bool) {
     //add more recent transaction
     //add more recent transaction
     function getRecentTransactions() public view returns (Transfer[] memory) {
+
         Transfer[] memory transfers = new Transfer[](transferTotal);
         uint count = 0;
         for (uint i = 0; i < transferTotal; i++) {
@@ -447,6 +553,7 @@ function verifyLand(uint _id) public onlyAdmin returns (bool) {
     }
 
     function getRecentRequests() public view returns (Request[] memory) {
+
         Request[] memory requests = new Request[](requestCount);
         uint count = 0;
         for (uint i = 0; i < requestCount; i++) {
