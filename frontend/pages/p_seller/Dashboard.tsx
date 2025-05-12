@@ -138,17 +138,20 @@ console.log(user.fullName?.toString())
       setLands(userLands);
       setRequests(userRequests);
       setLandsByMonth(monthlyData);
-
+console.log("USERREQUESTS",userRequests);
+console.log("USERREQUESTS", userRequests.map(req => req.status));
+// console.log("completedRequest",completedRequests)
       // Calculate stats
       const totalListings = userLands.length;
       const revenue = userLands.reduce((sum, land) => sum + parseFloat(land.price || "0"), 0);
       const activeBuyers = new Set(userRequests.map(req => req.buyerId)).size;
       
-      const completedRequests = userRequests.filter(req => req.status === RequestStutus.Completed).length;
+      const completedRequests = userRequests.filter(req => req.status === RequestStutus.Accepted).length;
+      // console.log("completedRequest",completedRequests)
       const conversionRate = userRequests.length > 0 
         ? Math.round((completedRequests / userRequests.length) * 100)
         : 0;
-
+        console.log("completedRequest",completedRequests)
       // Calculate trends
       const calculateTrend = (current: number, previous: number) => {
         if (previous === 0) return current === 0 ? 0 : 100;
