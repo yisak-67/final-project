@@ -94,8 +94,8 @@ const Filter = () => {
               <Slider
                 value={sliderValue}
                 min={0}
-                max={10000000}
-                defaultValue={[0, 10000000]}
+                max={10000000000}
+                defaultValue={[0, 100000000]}
                 onChange={handleSliderChange}
                 trackStyle={[{ backgroundColor: "#48BB78" }]}
                 step={1}
@@ -123,7 +123,7 @@ const Filter = () => {
             </div>
             <div className="flex justify-between mt-2 flex-row">
               <span className="text-gray-600 font-thin">{sliderValue} - </span>
-              <span className="text-gray-600 font-thin">10000000 Matic</span>
+              <span className="text-gray-600 font-thin">1000000000 Matic</span>
             </div>
           </div>
         </div>
@@ -214,7 +214,7 @@ const Filter = () => {
               <span className="text-gray-600 font-thin">
                 {landSliderValue}-{" "}
               </span>
-              <span className="text-gray-600 font-thin">100000 sqft.</span>
+              <span className="text-gray-600 font-thin">1000000 sqft.</span>
             </div>
           </div>
         </div>

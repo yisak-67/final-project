@@ -100,7 +100,7 @@ const PersonalInformation: React.FC = () => {
             className="w-16 h-16 rounded-full object-cover border-2 border-blue-100"
           />
           {isEditing && (
-            <button type="button" title="Edit Profile Picture" className="absolute bottom-0 right-0 bg-blue-500 text-white p-1 rounded-full">
+            <button type="button" title="Edit Profile Picture" className="absolute bottom-0 right-0 bg-green-500 text-white p-1 rounded-full">
               <FaEdit size={12} />
             </button>
           )}
@@ -181,7 +181,7 @@ const PersonalInformation: React.FC = () => {
             </button>
             <button
               onClick={handleSave}
-              className="save-button px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center"
+              className="save-button px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-700 transition-colors flex items-center"
               disabled={isLoading}
             >
               {isLoading ? (

@@ -1,4 +1,4 @@
-import BuyerLayout from "@/layout/BuyerLayout";
+import { BuyerLayout } from "@/layout/BuyerLayout";
 import React from "react";
 
 import { useEffect, useState } from "react";

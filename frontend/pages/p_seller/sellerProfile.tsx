@@ -1,5 +1,5 @@
 import React from "react";
-import SellerLayout from "@/layout/SellerLayout";
+import { SellerLayout } from "@/layout/SellerLayout";
 import ViewProfile from "@/components/profile/viewProfile";
 
 const SellerProfile = () => {

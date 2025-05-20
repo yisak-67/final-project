@@ -4,7 +4,7 @@ import {
   DisplayLand,
   Loader,
 } from "@/components/common";
-import SellerLayout from "@/layout/SellerLayout";
+import { SellerLayout } from "@/layout/SellerLayout";
 import { useAppSelector } from "@/lib/appstate";
 import { LandSelector } from "@/lib/appstate/features/land/selectors";
 import { LandModel, LandUpdateModel } from "@/lib/models/land";

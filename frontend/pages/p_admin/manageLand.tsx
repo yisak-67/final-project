@@ -11,6 +11,7 @@ import LandDetail from "@/components/admin/landDetail";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AllLands from "@/components/admin/allLands";
+
 export const getStaticProps: GetStaticProps = async () => {
   try {
     const url: string =

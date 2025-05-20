@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Collapse } from "antd";
 import { useRouter } from "next/router";
-import SellerLayout from "@/layout/SellerLayout";
+import { SellerLayout } from "@/layout/SellerLayout";
 import { CustomButton } from "@/components/common";
 import { RequestModel } from "@/lib/models/land";
 import {
@@ -44,6 +44,7 @@ const ManageRequest = () => {
   const handleAccept = async (requestId: number) => {
     try {
       await acceptRequest(requestId);
+      
       router.push("/p_seller/ManageRequest");
     } catch (err) {
       console.error("Error accepting request:", err);

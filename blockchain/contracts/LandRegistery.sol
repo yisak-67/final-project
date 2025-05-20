@@ -190,6 +190,7 @@ contract LandRegistery {
 
         require(allUsers[msg.sender].id == msg.sender);
         require(allUsers[msg.sender].isBanned == false);
+        
 
         if (
             keccak256(abi.encodePacked(bytes(allUsers[msg.sender].email))) ==
@@ -357,7 +358,7 @@ function verifyLand(uint _id) public onlyAdmin returns (bool) {
             allLands[id].postedBy == msg.sender,
             "You are not the owner of this land"
         );
-        
+
         bool island = checkIfLandExist(id);
      
         if (island) {
@@ -400,6 +401,12 @@ function verifyLand(uint _id) public onlyAdmin returns (bool) {
             allLands[_landId].postedBy != msg.sender,
             "You cannot request your own land"
         );
+        //required the already rquested status
+       
+        // require(
+        //     allRequests[requestCount].status != RequestStatus.accepted,
+        //     "You have already requested this land"
+        // );
         requestCount++;
         Land memory land = getLand(_landId);
         allRequests[requestCount] = Request(
@@ -437,6 +444,19 @@ function verifyLand(uint _id) public onlyAdmin returns (bool) {
     }
 
     function getSentRequests() public view returns (uint[] memory) {
+        require(
+            allUsers[msg.sender].id == msg.sender,
+            "You are not logged in"
+        );
+        require(
+            allUsers[msg.sender].isVerified,
+            "You are not verified to create land"
+        );
+        require(
+            allUsers[msg.sender].isBanned == false,
+            "You are banned from creating land"
+        );
+
 
         return sentRequests[msg.sender];
     }

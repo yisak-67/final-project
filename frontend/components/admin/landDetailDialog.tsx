@@ -1,10 +1,13 @@
 import { LandModel } from "@/lib/models/land";
 import { useRouter } from "next/router";
+import { toast } from "react-toastify";
 import React, { useState } from "react";
 import { CustomButton } from "../common";
 import Dialog from "./dialog";
-import LandDetail from "./landDetail";
 import { verifyLand } from "@/lib/services/blockchainService/verficationcontractServices";
+import "react-toastify/dist/ReactToastify.css";
+import LandDetail from "./landDetail"; // Adjust the path based on the actual location of the LandDetail component
+
 
 type Props = {
   land: LandModel;
@@ -31,14 +34,15 @@ const LandDetailDialog = ({
         const result = await verifyLand(land.id);
     
       if (result === 0) {
-        alert("Land verified successfully!");
+        toast.success("Land verified successfully!");
         setShowLandDetail(false);
         
         // Refresh data without full page reload
         router.replace(router.asPath, undefined, { scroll: false });
       
       } else {
-        alert("Land ID is undefined. Verification cannot proceed.");
+        toast.error("Land verification failed!");
+        setShowLandDetail(false);
       }
       }
 

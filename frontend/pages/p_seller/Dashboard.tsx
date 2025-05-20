@@ -16,7 +16,7 @@ import {
   initialLoadUser 
 } from "@/lib/services/blockchainService/authcontractServices";
 import { formatDistanceToNow } from "date-fns";
-import SellerLayout from "@/layout/SellerLayout";
+import { SellerLayout } from "@/layout/SellerLayout";
 import { LandModel, RequestModel, RequestStutus } from "@/lib/models/land";
 import { User } from "@/data/land";
 import {
@@ -99,7 +99,8 @@ const SellerDashboard = () => {
           isVerified: user.isVerified,
           isLoggedIn: user.isLoggedIn,
           dateJoined: user.dateJoined,
-        });
+          name: user.fullName, // Map 'name' property if required by 'land' User type
+        } as User);
       }
       return user;
     } catch (error) {

@@ -7,7 +7,7 @@ import {
   transerLandTitle
 } from "@/lib/services/blockchainService/transfercontractServices";
 import { acceptRequest, rejectRequest } from "@/lib/services/blockchainService/requestcontractServices";
-import SellerLayout from "@/layout/SellerLayout";
+import { SellerLayout } from "@/layout/SellerLayout";
 import { CustomButton } from "@/components/common";
 import { 
   FiArrowLeft, 
@@ -177,6 +177,7 @@ const TransactionDetail = () => {
   };
 
   const getConfirmations = () => {
+    console.log(" getConfirmations",transaction, " currentBlock",currentBlock);
     if (!transaction?.blockNumber || !currentBlock) return "N/A";
     return currentBlock - transaction.blockNumber;
   };

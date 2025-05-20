@@ -1,4 +1,4 @@
-import SellerLayout from "@/layout/SellerLayout";
+import { SellerLayout } from "@/layout/SellerLayout";
 import React from "react";
 
 const Setting = () => {

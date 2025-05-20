@@ -1,5 +1,5 @@
 import { CustomButton, DisplayLand } from "@/components/common";
-import SellerLayout from "@/layout/SellerLayout";
+import { SellerLayout } from "@/layout/SellerLayout";
 import { useRouter } from "next/router";
 import { useAppDispatch, useAppSelector } from "@/lib/appstate";
 import { LandSelector } from "@/lib/appstate/features/land/selectors";

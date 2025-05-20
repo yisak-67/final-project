@@ -84,7 +84,7 @@ const TransferModel: React.FC<{
 
   return (
     <>
-      <Button type="default" onClick={showModal}>
+      <Button type="default" className="bg-[#45df54] text-black hover:bg-[#44e954] " onClick={showModal}>
         Transfer Ownership
       </Button>
       <Modal
@@ -111,7 +111,7 @@ const TransferModel: React.FC<{
                       </h3>
                       {/* Changed to show land owner's name instead of requestModel.sellerName */}
                       <h1 className="font-semibold text-justify text-[13px] font-sans">
-                        {requestModel.sellerId|| "Unknown Owner"}
+                        {requestModel.sellerName|| "Unknown Owner"}
                       </h1>
                     </div>
                   </div>
@@ -202,7 +202,7 @@ const TransferModel: React.FC<{
                   Number.parseInt(requestModel.requestId || "")
                 )
               }
-              className="bg-[#4acd8d] text-white p-2 w-96 rounded-lg shadow-lg flex justify-center items-center hover:cursor-pointer mt-10"
+              className=" bg-green-400 hover:bg-green-500 text-white p-2 w-96 rounded-lg shadow-lg flex justify-center items-center hover:cursor-pointer mt-10"
               disabled={isLoading}
             >
               {isLoading ? "Processing..." : "Transfer Ownership"}

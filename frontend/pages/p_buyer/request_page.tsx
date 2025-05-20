@@ -1,4 +1,4 @@
-import BuyerLayout from "@/layout/BuyerLayout";
+import { BuyerLayout } from "@/layout/BuyerLayout";
 import React, { useEffect, useState } from "react";
 import { Table } from "antd";
 import { Breakpoint } from "antd/es/_util/responsiveObserver";

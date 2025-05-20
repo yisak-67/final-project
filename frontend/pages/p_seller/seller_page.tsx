@@ -1,4 +1,4 @@
-import SellerLayout from "@/layout/SellerLayout";
+import { SellerLayout } from "@/layout/SellerLayout";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import Loader from "@/components/common/Loader";

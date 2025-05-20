@@ -53,6 +53,7 @@ const Register: NextPage = () => {
       router.push("/p_auth/login");
     } else {
       setIsLoading(false);
+      alert("user/account  is already registered");
       router.push("/p_auth/register");
     }
   };

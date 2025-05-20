@@ -50,8 +50,10 @@ const Login: NextPage = () => {
     console.log("working aaa");
     console.log(response);
 
+
     if (response.status) {
       disptach(authSucess(response.data));
+      
       setIsLoading(false);
     } else {
       setIsLoading(false);

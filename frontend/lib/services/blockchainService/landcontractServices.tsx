@@ -242,6 +242,30 @@ const updateLandInfoWithContract = async (
     };
   }
 };
+const getAllLandsHistory = async () => {
+  try {
+    const alchemyContract = await getAlchemyProvider();
+    const response = await alchemyContract?.getAllLandsHistory();
+    console.log({ response });
+    const history = { ...response };
+    console.log({ history });
+    const landHistory: LandHistory[] = [];
+    const keys = Object.keys(history);
+    for (let key of keys) {
+      landHistory.push({
+        user: parseUser(history[key][0]),
+        date: new Date(Number(history[key][1]) * 1000),
+      });
+    }
+
+    console.log({ landHistory });
+    return landHistory;
+  } catch (error) {
+    console.log("Error while fetching land history");
+    console.log({ error });
+    throw Error("Faild to fetch land histories");
+  }
+}
 
 export {
   createLandWithContract,
@@ -254,4 +278,9 @@ export {
   getTotalUnverifiedLandsLength,
   getLandHistory,
   getMonthlyLandData,
+  checkImageCompatibility,
+  fetchLands,
+  getAllLandsHistory,
+
+
 };

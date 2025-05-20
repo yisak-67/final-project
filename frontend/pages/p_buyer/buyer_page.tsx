@@ -7,7 +7,7 @@ import Filter from "@/components/buyer/Filter";
 import LandCard from "@/components/buyer/LandCard";
 import Search from "@/components/buyer/Search";
 import Sort from "@/components/buyer/Sort";
-import BuyerLayout from "@/layout/BuyerLayout";
+import { BuyerLayout } from "@/layout/BuyerLayout";
 import { useAppDispatch, useAppSelector } from "@/lib/appstate";
 import { getAllAvaliableLands } from "@/lib/appstate/features/land/actions";
 import { LandSelector } from "@/lib/appstate/features/land/selectors";

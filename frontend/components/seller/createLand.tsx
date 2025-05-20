@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { ToastContainer } from "react-toastify";
+
 
 import { useAppDispatch, useAppSelector } from "@/lib/appstate";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { setFilePath, setShowFileUpload, setShowMapbox } from "@/lib/appstate/features/land/actions";
 import { LandSelector } from "@/lib/appstate/features/land/selectors";
 import { LandModel } from "@/lib/models/land";
@@ -62,12 +64,12 @@ const CreateLand: React.FC = () => {
       const result = await createLandWithContract({ ...landData, isVerified: false });
   
       if (result.status === false) {
-        alert("Invalid input or you are not authorized to create land. Please verify your account.");
+        toast.error("Invalid input or you are not authorized to create land. Please verify your account.");
         router.push("/p_seller/CreateLandPage");
         return;
       }
   
-      alert("Land created successfully!");
+      toast.success("Land created successfully!");
       console.log("Created Land:", result);
       router.push("/p_seller/ManageLand");
   
@@ -76,9 +78,9 @@ const CreateLand: React.FC = () => {
   
       // Handle MetaMask RPC error with a user-friendly message
       if (error?.message?.includes("You are not verified to create land")) {
-        alert("You are not verified to create land. Please complete your verification process before proceeding.");
+        toast.error("You are not verified to create land. Please complete your verification process before proceeding.");
       } else {
-        alert("An error occurred while creating the land. Please check your inputs or try again later.");
+        toast.error("An error occurred while creating the land. Please check your inputs or try again later.");
       }
   
       router.push("/p_seller/CreateLandPage");

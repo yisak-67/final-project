@@ -15,6 +15,7 @@ const transerLandTitle = async (
 
     const transaction = await alchemyContract?.transferlandtitle(id);
     await transaction.wait();
+    console.log("Transaction successful:", transaction);
     return { status: true };
   } catch (error) {
     return {
@@ -76,5 +77,6 @@ const getRequestWithContract = async (id: number) => {
     console.log(`error message : ${error}`);
   }
 };
+
 
 export { getAllRequestsListWithContract, transerLandTitle, getRequestWithContract, getTotalRequesCountWithContract };

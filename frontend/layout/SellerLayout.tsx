@@ -1,3 +1,5 @@
+import { withAuth } from "@/components/common/withAuth";
+import { UserType } from "@/lib/models/auth";
 import { Footer, Sidebar } from "@/components/common";
 import SellerNavBar from "@/components/seller/SellerNavBar";
 import { sellerNavLinks } from "@/constants";
@@ -7,7 +9,7 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-const SellerLayout: React.FC<LayoutProps> = ({ children }) => {
+const SellerLayoutComponent: React.FC<LayoutProps> = ({ children }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const toggleMobile = () => {
@@ -45,4 +47,4 @@ const SellerLayout: React.FC<LayoutProps> = ({ children }) => {
   );
 };
 
-export default SellerLayout;
+export const SellerLayout = withAuth(SellerLayoutComponent, [UserType.Seller]);

@@ -123,3 +123,17 @@ export interface LocateMapReturnType {
   allLatlong: number[][];
   lArea: number;
 }
+
+export  interface LandHistoryModel {
+  id?: number;
+  title?: string;
+  documentHash?: string;
+  price?: string;
+  locationAddress?: string;
+  landAddress?: string;
+  postedBy?: string;
+  detail?: string;
+  postedDate?: Date;
+  isVerified?: boolean;
+  area?: string;
+}
