@@ -87,7 +87,6 @@ const Register: NextPage = () => {
                 isTextArea={false}
                 value={userForm.fullName as string}
                 handleChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFormFieldChange("fullName", e.target.value)}
-                required
               />
 
               <CustomFormField
@@ -97,7 +96,6 @@ const Register: NextPage = () => {
                 isTextArea={false}
                 value={userForm.addressLocation}
                 handleChange={(e) => handleFormFieldChange("addressLocation", e.target.value)}
-                required
               />
             </div>
 
@@ -108,7 +106,6 @@ const Register: NextPage = () => {
               isTextArea={false}
               value={userForm.phoneNumber}
               handleChange={(e) => handleFormFieldChange("phoneNumber", e.target.value)}
-              required
             />
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -119,7 +116,6 @@ const Register: NextPage = () => {
               isTextArea={false}
               value={userForm.email}
               handleChange={(e: React.ChangeEvent<HTMLInputElement>) => handleFormFieldChange("email", e.target.value)}
-              required
             />
 
               <div>
