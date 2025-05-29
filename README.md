@@ -32,6 +32,7 @@ npx hardhat run scripts/deploy.ts
 
 
 ## 📦 Requirements and Dependencies
+install metamask on browser
 
 ### 🔗 **Blockchain Sub-Project** (`blockchain/package.json`)
 **Dependencies:**
