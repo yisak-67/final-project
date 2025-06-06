@@ -13,6 +13,7 @@ const Hero = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 pb-16 md:pt-40 md:pb-24">
       <ScrollAnimationWrapper>
+    
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center"
           variants={scrollAnimation}
